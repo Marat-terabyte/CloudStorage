@@ -4,6 +4,7 @@
 using CloudStorageLibrary;
 using CloudStorageLibrary.Serializers;
 using CloudStorageLibrary.Commands;
+using CloudStorageLibrary.Serializers.Exceptions;
 
 namespace CloudStorageLibraryTest
 {
@@ -26,6 +27,14 @@ namespace CloudStorageLibraryTest
             Response actualDeserializedResponse = ResponseSerializer.Deserialize(response);
 
             Assert.AreEqual(expectedDeserializedResponse, actualDeserializedResponse);
+        }
+
+        [TestMethod]
+        public void DeserializeTest_NotValidByteLength()
+        {
+            string serializedResponse = "NotOk\n10f4 bytes";
+
+            Assert.ThrowsException<NotValidByteLength>(() => ResponseSerializer.Deserialize(serializedResponse));
         }
 
         private static IEnumerable<object[]> GetTestResponseToSerialize()

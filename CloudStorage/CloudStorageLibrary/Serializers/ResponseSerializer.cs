@@ -52,6 +52,13 @@ namespace CloudStorageLibrary.Serializers
             }
         }
 
-        private static long ReadResponseLength(ref int index, string response) => long.Parse(StringSeparator.Separate(ref index, response, ' '));
+        private static long ReadResponseLength(ref int index, string response)
+        {
+            bool isPasrsed = long.TryParse(StringSeparator.Separate(ref index, response, ' '), out long result);
+            if (isPasrsed)
+                return result;
+            else
+                throw new NotValidByteLength($"Data length is not {nameof(Int64)}");
+        }
     }
 }
