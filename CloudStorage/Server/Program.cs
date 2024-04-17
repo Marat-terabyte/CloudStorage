@@ -1,4 +1,7 @@
-﻿namespace Server
+﻿// MIT License
+// Copyright (c) 2024 Marat
+
+namespace Server
 {
     internal class Program
     {

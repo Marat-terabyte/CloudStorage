@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿// MIT License
+// Copyright (c) 2024 Marat
+
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;

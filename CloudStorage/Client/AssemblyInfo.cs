@@ -1,3 +1,6 @@
+// MIT License
+// Copyright (c) 2024 Marat
+
 using System.Windows;
 
 [assembly: ThemeInfo(
