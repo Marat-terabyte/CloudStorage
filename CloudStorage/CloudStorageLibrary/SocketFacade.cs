@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿// MIT License
+// Copyright (c) 2024 Marat
+
+using System.Text;
 using System.Net.Sockets;
 
 namespace CloudStorageLibrary
