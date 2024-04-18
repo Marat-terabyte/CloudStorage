@@ -9,11 +9,12 @@ namespace CloudStorageLibrary
     /// <summary>
     /// Provides socket functions
     /// </summary>
-    public class SocketFacade
+    public class SocketFacade : IDisposable
     {
-        public Socket Socket { get; set; }
+        private bool _disposedSocket;
 
-        public bool IsConnected { get => Socket.Connected; }
+        public Socket Socket { get; set; }
+        public bool IsConnected { get => Socket?.Connected ?? false; }
 
         public SocketFacade(Socket socket)
         {
@@ -70,6 +71,27 @@ namespace CloudStorageLibrary
                 Socket.Shutdown(SocketShutdown.Both);
             
             Socket.Close();
+        }
+
+        // Implementation of Dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedSocket)
+            {
+                if (disposing)
+                {
+                    CloseConnection();
+                    Socket.Dispose();
+                }
+
+                _disposedSocket = true;
+            }
         }
     }
 }
