@@ -7,8 +7,13 @@ using System.Text;
 
 namespace CloudStorageLibrary.Serializers
 {
+    /// <summary>
+    /// Provides functionality for serializing and deserializing requests
+    /// </summary>
     public static class RequestSerializer
     {
+        /// <summary> Converts <see cref="Request"/> to the string </summary>
+        /// <param name="request"> The value to serialize </param>
         public static string Serialize(Request request)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -41,13 +46,16 @@ namespace CloudStorageLibrary.Serializers
                 string arg = request.Args[i];
                 if (string.IsNullOrWhiteSpace(arg))
                     continue;
-
+                
                 stringBuilder.Append(", " + arg);
             }
 
             return stringBuilder.ToString();
         }
 
+        /// <summary> Converts string request to <see cref="Request"/> </summary>
+        /// <param name="request"> The value to deserialize </param>
+        /// <exception cref="NotSupportedCommand"/>
         public static Request Deserialize(string request)
         {
             Request DeserializedRequest = new Request();
@@ -55,7 +63,7 @@ namespace CloudStorageLibrary.Serializers
             DeserializedRequest.Username = ReadUsername(out int index, request);
             DeserializedRequest.Command = ReadCommand(ref index, request);
             DeserializedRequest.Args = ReadArgs(ref index, request);
-
+            
             return DeserializedRequest;
         }
 

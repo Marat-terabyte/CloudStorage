@@ -6,6 +6,9 @@ using System.Net.Sockets;
 
 namespace CloudStorageLibrary
 {
+    /// <summary>
+    /// Provides socket functions
+    /// </summary>
     public class SocketFacade
     {
         public Socket Socket { get; set; }
@@ -17,11 +20,18 @@ namespace CloudStorageLibrary
             Socket = socket;
         }
 
+        /// <summary> Receives bytes with the size of the array containing them 8192 bytes and decodes them </summary>
+        /// <returns> Received data from the connected socket </returns>
+        /// <exception cref="SocketException"></exception>
         public string Receive()
         {
             return Receive(Socket.ReceiveBufferSize);
         }
 
+        /// <summary> Receives bytes and decodes them </summary>
+        /// <param name="bufferSize"> The size of array contains received bytes </param>
+        /// <returns> Received data from the connected socket </returns>
+        /// <exception cref="SocketException"></exception>
         public string Receive(int bufferSize)
         {
             if (!IsConnected)
@@ -38,6 +48,9 @@ namespace CloudStorageLibrary
             return data;
         }
 
+        /// <summary> Encodes data and sends it to the connected socket </summary>
+        /// <param name="data"> The value to send </param>
+        /// <exception cref="SocketException"/>
         public void Send(string data)
         {
             if (!IsConnected)
@@ -50,6 +63,7 @@ namespace CloudStorageLibrary
             Socket.Send(dataBytes);
         }
 
+        /// <summary> Closes the socket connection </summary>
         public void CloseConnection()
         {
             if (IsConnected)

@@ -7,8 +7,13 @@ using System.Text;
 
 namespace CloudStorageLibrary.Serializers
 {
+    /// <summary>
+    /// Provides functionality for serializing and deserializing respons
+    /// </summary>
     public static class ResponseSerializer
     {
+        /// <summary> Converts <see cref="Response"/> to the string </summary>
+        /// <param name="response">The value to convert</param>
         public static string Serialize(Response response)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -20,6 +25,12 @@ namespace CloudStorageLibrary.Serializers
             return stringBuilder.ToString();
         }
 
+        /// <summary>
+        /// Converts string response to <see cref="Response"/>
+        /// </summary>
+        /// <param name="response"> The value to convert </param>
+        /// <exception cref="NotSupportedCommand"/>
+        /// <exception cref="NotValidByteLength"/>
         public static Response Deserialize(string response)
         {
             Response DeserializedResponse = new Response();
