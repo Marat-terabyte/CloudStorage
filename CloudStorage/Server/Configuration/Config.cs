@@ -9,5 +9,6 @@ namespace Configuration
     internal class Config
     {
         public string? Host { get; set; }
+        public string? DatabaseConnectionString {  get; set; }
     }
 }
