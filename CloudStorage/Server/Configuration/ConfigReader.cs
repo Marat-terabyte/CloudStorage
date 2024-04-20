@@ -9,16 +9,21 @@ namespace Server.Configuration
     /// <summary>
     /// Reads the configuration file
     /// </summary>
-    internal class ConfigReader
+    internal static class ConfigReader
     {
-        private readonly string _configFile = "config.json";
+        private static readonly string _configFile = "config.json";
+
+        private static Config? _instance;
 
         /// <summary>
         /// Reads json from the configuration file
         /// </summary>
-        public Config? ReadConfig()
+        public static Config? ReadConfig()
         {
-            return JsonSerializer.Deserialize<Config>(File.ReadAllText(_configFile));
+            if (_instance == null)
+                _instance = JsonSerializer.Deserialize<Config>(_configFile);
+
+            return _instance;
         }
     }
 }
