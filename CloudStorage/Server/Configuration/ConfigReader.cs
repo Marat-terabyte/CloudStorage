@@ -21,7 +21,7 @@ namespace Server.Configuration
         public static Config? ReadConfig()
         {
             if (_instance == null)
-                _instance = JsonSerializer.Deserialize<Config>(_configFile);
+                _instance = JsonSerializer.Deserialize<Config>(File.ReadAllText(_configFile));
 
             return _instance;
         }
