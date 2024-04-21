@@ -14,10 +14,17 @@ namespace CloudStorageLibrary
         private bool _disposedSocket;
 
         public Socket Socket { get; set; }
-        public bool IsConnected { get => Socket?.Connected ?? false; }
+        public bool IsConnected
+        {
+            get =>
+                !(Socket.Available == 0 && Socket.Poll(1000, SelectMode.SelectRead));
+        }
 
         public SocketFacade(Socket socket)
         {
+            if (!socket.Connected)
+                throw new SocketException((int)SocketError.NotConnected, $"Socket is disconnected. Error code: {SocketError.NotConnected}");
+
             Socket = socket;
         }
 
@@ -35,18 +42,46 @@ namespace CloudStorageLibrary
         /// <exception cref="SocketException"></exception>
         public string Receive(int bufferSize)
         {
-            if (!IsConnected)
-            {
-                Socket.Close();
-                throw new SocketException((int) SocketError.NotConnected, $"Socket is disconnected. Error code: {SocketError.NotConnected}");
-            }
-            
-            byte[] dataBytes = new byte[bufferSize];
-            
-            int numberOfBytes = Socket.Receive(dataBytes);
+            byte[] dataBytes = ReceiveBytes(bufferSize, out int numberOfBytes);
             string data = Encoding.UTF8.GetString(dataBytes, 0, numberOfBytes);
 
             return data;
+        }
+
+        /// <summary>
+        /// Receives bytes with the size of array containing them 8192 bytes
+        /// </summary>
+        /// <exception cref="SocketException"></exception>
+        public byte[] ReceiveBytes()
+        {
+            return ReceiveBytes(Socket.ReceiveBufferSize);
+        }
+
+        /// <summary>
+        /// Receives bytes from the connected socket
+        /// </summary>
+        /// <param name="bufferSize">The size of array contains received bytes</param>
+        /// <exception cref="SocketException"></exception>
+        public byte[] ReceiveBytes(int bufferSize)
+        {
+            byte[] dataBytes = new byte[bufferSize];
+            Socket.Receive(dataBytes);
+
+            return dataBytes;
+        }
+
+        /// <summary>
+        /// Receives bytes from the connected socket
+        /// </summary>
+        /// <param name="bufferSize">The size of array contains received bytes</param>
+        /// <param name="numberOfBytes">The number of bytes received</param>
+        /// <exception cref="SocketException"></exception>
+        public byte[] ReceiveBytes(int bufferSize, out int numberOfBytes)
+        {
+            byte[] dataBytes = new byte[bufferSize];
+            numberOfBytes = Socket.Receive(dataBytes);
+
+            return dataBytes;
         }
 
         /// <summary> Encodes data and sends it to the connected socket </summary>
@@ -54,15 +89,20 @@ namespace CloudStorageLibrary
         /// <exception cref="SocketException"/>
         public void Send(string data)
         {
-            if (!IsConnected)
-            {
-                Socket.Close();
-                throw new SocketException((int)SocketError.NotConnected, $"Socket is disconnected. Error code: {SocketError.NotConnected}");
-            }
-
             byte[] dataBytes = Encoding.UTF8.GetBytes(data);
-            Socket.Send(dataBytes);
+            SendBytes(dataBytes);
         }
+
+        /// <summary>
+        /// Sends bytes to the connected socket
+        /// </summary>
+        /// <param name="bytes">The bytes to send</param>
+        /// <exception cref="SocketException"></exception>
+        public void SendBytes(byte[] bytes)
+        {
+            Socket.Send(bytes);
+        }
+
 
         /// <summary> Closes the socket connection </summary>
         public void CloseConnection()
