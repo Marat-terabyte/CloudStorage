@@ -84,6 +84,28 @@ namespace CloudStorageLibrary
             return dataBytes;
         }
 
+        /// <summary>
+        /// Receives bytes with the size of the array containing them 8192 bytes from the connected socket and converts them into <see cref="int"/>
+        /// </summary>
+        /// <exception cref="SocketException"></exception>
+        public int ReceiveInt()
+        {
+            byte[] dataBytes = ReceiveBytes();
+
+            return BitConverter.ToInt32(dataBytes);
+        }
+
+        /// <summary>
+        /// Receives bytes from the connected socket and converts them into <see cref="int"/>
+        /// </summary>
+        /// <exception cref="SocketException"></exception>
+        public int ReceiveInt(int bufferSize)
+        {
+            byte[] dataBytes = ReceiveBytes(bufferSize);
+
+            return BitConverter.ToInt32(dataBytes);
+        }
+
         /// <summary> Encodes data and sends it to the connected socket </summary>
         /// <param name="data"> The value to send </param>
         /// <exception cref="SocketException"/>
@@ -94,15 +116,18 @@ namespace CloudStorageLibrary
         }
 
         /// <summary>
+        /// Converts <see cref="int"/> into <see cref="byte"/>[] and sends them
+        /// </summary>
+        /// <param name="value">The value to send</param>
+        /// <exception cref="SocketError"></exception>
+        public void Send(int value) => Socket.Send(BitConverter.GetBytes(value));
+
+        /// <summary>
         /// Sends bytes to the connected socket
         /// </summary>
         /// <param name="bytes">The bytes to send</param>
         /// <exception cref="SocketException"></exception>
-        public void SendBytes(byte[] bytes)
-        {
-            Socket.Send(bytes);
-        }
-
+        public void SendBytes(byte[] bytes) => Socket.Send(bytes);
 
         /// <summary> Closes the socket connection </summary>
         public void CloseConnection()
