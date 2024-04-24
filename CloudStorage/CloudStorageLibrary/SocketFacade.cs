@@ -85,25 +85,25 @@ namespace CloudStorageLibrary
         }
 
         /// <summary>
-        /// Receives bytes with the size of the array containing them 8192 bytes from the connected socket and converts them into <see cref="int"/>
+        /// Receives bytes with the size of the array containing them 4 bytes from the connected socket and converts them into <see cref="int"/>
         /// </summary>
         /// <exception cref="SocketException"></exception>
         public int ReceiveInt()
         {
-            byte[] dataBytes = ReceiveBytes();
+            byte[] dataBytes = ReceiveBytes(4);
 
             return BitConverter.ToInt32(dataBytes);
         }
 
         /// <summary>
-        /// Receives bytes from the connected socket and converts them into <see cref="int"/>
+        /// Receives bytes with the size of the array containing them 8 bytes from the connected socket and converts them into <see cref="long"/>
         /// </summary>
         /// <exception cref="SocketException"></exception>
-        public int ReceiveInt(int bufferSize)
+        public long ReceiveLong()
         {
-            byte[] dataBytes = ReceiveBytes(bufferSize);
+            byte[] dataBytes = ReceiveBytes(8);
 
-            return BitConverter.ToInt32(dataBytes);
+            return BitConverter.ToInt64(dataBytes);
         }
 
         /// <summary> Encodes data and sends it to the connected socket </summary>
@@ -119,8 +119,15 @@ namespace CloudStorageLibrary
         /// Converts <see cref="int"/> into <see cref="byte"/>[] and sends them
         /// </summary>
         /// <param name="value">The value to send</param>
-        /// <exception cref="SocketError"></exception>
+        /// <exception cref="SocketException"></exception>
         public void Send(int value) => Socket.Send(BitConverter.GetBytes(value));
+
+        /// <summary>
+        /// Converts <see cref="long"/> into <see cref="byte"/>[] and sends them
+        /// </summary>
+        /// <param name="value">The value to send</param>
+        /// <exception cref="SocketException"></exception>
+        public void Send(long value) => Socket.Send(BitConverter.GetBytes(value));
 
         /// <summary>
         /// Sends bytes to the connected socket
