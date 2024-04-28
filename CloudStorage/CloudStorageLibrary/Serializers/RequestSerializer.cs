@@ -88,6 +88,8 @@ namespace CloudStorageLibrary.Serializers
                     return Command.SignIn;
                 case "SignOut":
                     return Command.SignOut;
+                case "List":
+                    return Command.List;
                 default:
                     throw new NotSupportedCommand($"{command} is not supported command");
             }
