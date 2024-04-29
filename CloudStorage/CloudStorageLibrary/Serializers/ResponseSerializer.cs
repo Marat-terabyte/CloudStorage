@@ -31,12 +31,19 @@ namespace CloudStorageLibrary.Serializers
         /// <param name="response"> The value to convert </param>
         /// <exception cref="NotSupportedCommand"/>
         /// <exception cref="NotValidByteLength"/>
-        public static Response Deserialize(string response)
+        public static Response? Deserialize(string response)
         {
             Response DeserializedResponse = new Response();
 
-            DeserializedResponse.Status = ReadCommandStatus(out int index, response);
-            DeserializedResponse.DataLenght = ReadResponseLength(ref index, response);
+            try
+            {
+                DeserializedResponse.Status = ReadCommandStatus(out int index, response);
+                DeserializedResponse.DataLenght = ReadResponseLength(ref index, response);
+            }
+            catch
+            {
+                return null;
+            }
 
             return DeserializedResponse;
         }

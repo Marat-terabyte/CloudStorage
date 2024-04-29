@@ -56,14 +56,21 @@ namespace CloudStorageLibrary.Serializers
         /// <summary> Converts string request to <see cref="Request"/> </summary>
         /// <param name="request"> The value to deserialize </param>
         /// <exception cref="NotSupportedCommand"/>
-        public static Request Deserialize(string request)
+        public static Request? Deserialize(string request)
         {
             Request DeserializedRequest = new Request();
 
-            DeserializedRequest.Username = ReadUsername(out int index, request);
-            DeserializedRequest.Command = ReadCommand(ref index, request);
-            DeserializedRequest.Args = ReadArgs(ref index, request);
-            
+            try
+            {
+                DeserializedRequest.Username = ReadUsername(out int index, request);
+                DeserializedRequest.Command = ReadCommand(ref index, request);
+                DeserializedRequest.Args = ReadArgs(ref index, request);
+            }
+            catch
+            {
+                return null;
+            }
+
             return DeserializedRequest;
         }
 
