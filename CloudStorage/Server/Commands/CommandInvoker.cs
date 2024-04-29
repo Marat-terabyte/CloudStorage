@@ -12,6 +12,7 @@ namespace Server.Commands
         private SocketFacade _socketFacade;
 
         private ListCommand _listCommand;
+        private RemoveCommand _removeCommand;
 
         public CommandInvoker(CloudStorageServer server, SocketFacade dataTransfer, string basePath)
         {
@@ -19,6 +20,7 @@ namespace Server.Commands
             _socketFacade = dataTransfer;
 
             _listCommand = new ListCommand(server, dataTransfer, basePath);
+            _removeCommand = new RemoveCommand(server, dataTransfer, basePath);
         }
 
         public void Invoke(Request request)
@@ -26,7 +28,10 @@ namespace Server.Commands
             switch (request.Command)
             {
                 case Command.List:
-                    _listCommand.Execute();
+                    _listCommand.Execute(request);
+                    break;
+                case Command.Remove:
+                    _removeCommand.Execute(request);
                     break;
                 case Command.Download:
                     break;
@@ -35,8 +40,6 @@ namespace Server.Commands
                 case Command.SignIn:
                     break;
                 case Command.SignOut:
-                    break;
-                case Command.Remove:
                     break;
             }
         }
