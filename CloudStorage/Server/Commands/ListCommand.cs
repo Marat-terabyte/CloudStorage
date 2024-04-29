@@ -16,35 +16,48 @@ namespace Server.Commands
             _basePath = basePath;
         }
 
-        public override void Execute()
+        public override void Execute(Request request)
         {
-            var dirsAndFiles = Encoding.UTF8.GetBytes(GetFilesAndFolders());
+            string path;
 
-            Response response = new Response();
-            response.Status = CommandStatus.Ok;
-            response.DataLenght = dirsAndFiles.Length;
-            _server!.SendResponse(response);
+            if (request.Args.Length > 0)
+                path = _basePath + request.Args[0];
+            else
+                path = _basePath;
 
-            _dataTransfer!.SendBytes(dirsAndFiles);
+            if (!Directory.Exists(path))
+            {
+                Response response = new Response();
+                response.Status = CommandStatus.NotOk;
+                _server!.SendResponse(response);
+            }
+            else
+            {
+                var dirsAndFiles = Encoding.UTF8.GetBytes(GetFilesAndFolders(path));
+
+                Response response = new Response();
+                response.Status = CommandStatus.Ok;
+                response.DataLenght = dirsAndFiles.Length;
+                _server!.SendResponse(response);
+
+                _dataTransfer!.SendBytes(dirsAndFiles);
+            }
         }
 
-        private string GetFilesAndFolders()
+        private string GetFilesAndFolders(string path)
         {
             StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.AppendLine("dir: ..");
 
-            if (Directory.Exists(_basePath))
+            foreach (var dir in Directory.GetDirectories(path))
             {
-                foreach (var dir in Directory.GetDirectories(_basePath))
-                {
-                    stringBuilder.Append("dir: " + dir + '\n');
-                }
+                stringBuilder.Append("dir: " + dir + '\n');
+            }
 
-                foreach (var file in Directory.GetFiles(_basePath))
-                {
-                    stringBuilder.Append("file: " +  file + '\n');
-                }
+            foreach (var file in Directory.GetFiles(path))
+            {
+                stringBuilder.Append("file: " + file + '\n');
             }
 
             return stringBuilder.ToString();

@@ -21,6 +21,6 @@ namespace Server.Commands
              _dataTransfer = dataTransfer;
         }
 
-        public abstract void Execute();
+        public abstract void Execute(Request request);
     }
 }
