@@ -28,9 +28,14 @@ namespace Client
         /// <exception cref="NotValidByteLength"/>
         public Response ReceiveResponse()
         {
-            string serializedResponse = _socket.Receive(ReceiveBufferSize);
+            Response? response = null;
+            while (response == null)
+            {
+                string data = _socket.Receive(256);
+                response = ResponseSerializer.Deserialize(data);
+            }
 
-            return ResponseSerializer.Deserialize(serializedResponse);
+            return response;
         }
 
         /// <summary> Serializes a request and sends it to the server </summary>

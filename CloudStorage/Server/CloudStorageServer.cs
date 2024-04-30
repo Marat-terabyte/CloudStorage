@@ -27,9 +27,14 @@ namespace Server
         /// <exception cref="NotSupportedCommand"/>
         public Request ReceiveRequest()
         {
-            string serializedRequest = _socket.Receive();
+            Request? request = null;
+            while (request == null)
+            {
+                string data = _socket.Receive(1024);
+                request = RequestSerializer.Deserialize(data);
+            }
 
-            return RequestSerializer.Deserialize(serializedRequest);
+            return request;
         }
 
         /// <summary> Serializes a response and sends it to the user </summary>
