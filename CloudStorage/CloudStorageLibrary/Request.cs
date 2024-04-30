@@ -24,6 +24,12 @@ namespace CloudStorageLibrary
             Args = args;
         }
 
+        public Request(string username, Command command)
+        {
+            Username = username;
+            Command = command;
+        }
+
         public override bool Equals(object? obj)
         {
             return Equals(obj as Request);

@@ -23,6 +23,11 @@ namespace CloudStorageLibrary
             DataLenght = dataLenght;
         }
 
+        public Response(CommandStatus status)
+        {
+            Status = status;
+        }
+
         public override bool Equals(object? obj)
         {
             return Equals(obj as Response);
