@@ -74,6 +74,7 @@ namespace CloudStorageLibrary
 
             long rounds = (long) Math.Ceiling(sizeOfFile / (float) BufferSize);
 
+            Directory.CreateDirectory(Path.GetDirectoryName(fileName)!);
             using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                 for (; rounds > 1; rounds--)
