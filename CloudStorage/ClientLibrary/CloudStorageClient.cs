@@ -6,7 +6,7 @@ using CloudStorageLibrary;
 using CloudStorageLibrary.Serializers;
 using CloudStorageLibrary.Serializers.Exceptions;
 
-namespace Client
+namespace ClientLibrary
 {
     /// <summary>
     /// Implements the logic of communication between server and client
@@ -20,6 +20,11 @@ namespace Client
         public CloudStorageClient(SocketFacade socket)
         {
             _socket = socket;
+        }
+
+        public CloudStorageClient(Socket socket)
+        {
+            _socket = new SocketFacade(socket);
         }
 
         /// <summary> Receives a string response from the server and deserializes it </summary>
