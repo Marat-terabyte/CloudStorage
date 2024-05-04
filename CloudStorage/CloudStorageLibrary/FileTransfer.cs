@@ -3,6 +3,7 @@
 
 using System;
 using System.Net.Sockets;
+using System.Text;
 
 namespace CloudStorageLibrary
 {
@@ -14,7 +15,7 @@ namespace CloudStorageLibrary
         private SocketFacade _socketFacade;
         private bool _disposed;
 
-        public int BufferSize { get; set; } = 4096;
+        public int BufferSize { get; set; } = 8192;
 
         public FileTransfer(Socket socket)
         {
@@ -34,20 +35,12 @@ namespace CloudStorageLibrary
         /// <exception cref="SocketException"></exception>
         public void SendFile(string fileName)
         {
-            // Receives the buffer size of the connected socket
-            int size = _socketFacade.ReceiveInt();
-
             using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             {
-                _socketFacade.Send(fs.Length);
-
-                while (fs.Length - fs.Position > size)
+                while (fs.Length - fs.Position > 0)
                 {
-                    _socketFacade.SendBytes(ReadFile(fs, size));
+                    _socketFacade.SendBytes(ReadFile(fs, BufferSize));
                 }
-
-                _socketFacade.Send((int)(fs.Length - fs.Position)); // Sends the remaining file size
-                _socketFacade.SendBytes(ReadFile(fs, size));
             }
         }
 
@@ -65,28 +58,21 @@ namespace CloudStorageLibrary
         /// <param name="fileName">The path to create of the received file</param>
         /// <param name="sizeOfFile">The file size that will be received</param>
         /// <exception cref="SocketException"></exception>
-        public void ReceiveFile(string fileName)
-        {
-            // Sends the buffer size to the connected socket
-            _socketFacade.Send(BufferSize);
-
-            long sizeOfFile = _socketFacade.ReceiveLong();
-
-            long rounds = (long) Math.Ceiling(sizeOfFile / (float) BufferSize);
-
+        public void ReceiveFile(string fileName, long sizeOfFile)
+        {            
             Directory.CreateDirectory(Path.GetDirectoryName(fileName)!);
             using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
-                for (; rounds > 1; rounds--)
+                long received;
+                for (received = 0; received < sizeOfFile - BufferSize ; received += BufferSize)
                 {
                     byte[] buffer = _socketFacade.ReceiveBytes(BufferSize);
                     fs.Write(buffer, 0, buffer.Length);
                 }
 
-                // Receives the remaining file size
-                int size = _socketFacade.ReceiveInt();
-
-                byte[] buff = _socketFacade.ReceiveBytes(size);
+                // Receives the remaining file
+                int remainSize = (int)(sizeOfFile - received);
+                byte[] buff = _socketFacade.ReceiveBytes(remainSize);
                 fs.Write(buff, 0, buff.Length);
             }
         }
