@@ -27,6 +27,9 @@ namespace CloudStorageLibrary.Serializers
 
         private static string SerializeRequestArgs(Request request, StringBuilder stringBuilder)
         {
+            if (request.Args == null)
+                return "";
+
             // Add the first not null or empty argument
             int i = 0;
             for (; i < stringBuilder.Length && i < request.Args.Length; i++)
