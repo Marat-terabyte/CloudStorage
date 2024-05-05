@@ -29,7 +29,7 @@ namespace CloudStorageLibrary.Serializers
         {
             // Add the first not null or empty argument
             int i = 0;
-            for (; i < stringBuilder.Length; i++)
+            for (; i < stringBuilder.Length && i < request.Args.Length; i++)
             {
                 var arg = request.Args[i];
                 if (!string.IsNullOrEmpty(arg))
