@@ -57,8 +57,12 @@ namespace CloudStorageLibrary
         /// <param name="sizeOfFile">The file size that will be received</param>
         /// <exception cref="SocketException"></exception>
         public void ReceiveFile(string fileName, long sizeOfFile)
-        {            
-            Directory.CreateDirectory(Path.GetDirectoryName(fileName)!);
+        {
+            string? dir = Path.GetDirectoryName(fileName);
+            Console.WriteLine(dir);
+            if (dir != null && !string.IsNullOrWhiteSpace(dir))
+                Directory.CreateDirectory(dir);
+
             using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                 long received;
