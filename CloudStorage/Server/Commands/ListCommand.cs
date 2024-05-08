@@ -11,37 +11,51 @@ namespace Server.Commands
     {
         private string _basePath;
 
-        public ListCommand(CloudStorageServer server, SocketFacade dataTransfer, string basePath) : base(server, dataTransfer)
+        public ListCommand(CloudStorageServer server, string basePath) : base(server)
         {
             _basePath = basePath;
         }
 
-        public override void Execute(Request request)
+        protected override void DoAction(Request request)
         {
             string path;
-
-            if (request.Args.Length > 0)
-                path = _basePath + request.Args[0];
-            else
+            if (request.Args.Length == 0)
                 path = _basePath;
+            else
+                path = _basePath + request.Args[0];
+
+            var dirsAndFiles = Encoding.UTF8.GetBytes(GetFilesAndFolders(path));
+            
+            Response response = new Response(CommandStatus.Ok, dirsAndFiles.Length);
+            _server!.SendResponse(response, dirsAndFiles);
+        }
+
+        protected override bool CanExecute(object parameter, out string? errorMessage)
+        {
+            errorMessage = null;
+
+            string[]? args = parameter as string[];
+            if (args == null)
+            {
+                errorMessage = "Not correct request";
+                
+                return false;
+            }
+
+            string path;
+            if (args.Length == 0)
+                path = _basePath;
+            else
+                path = _basePath + args[0];
 
             if (!Directory.Exists(path))
             {
-                Response response = new Response();
-                response.Status = CommandStatus.NotOk;
-                _server!.SendResponse(response);
-            }
-            else
-            {
-                var dirsAndFiles = Encoding.UTF8.GetBytes(GetFilesAndFolders(path));
+                errorMessage = $"{path} does not exist";
 
-                Response response = new Response();
-                response.Status = CommandStatus.Ok;
-                response.DataLenght = dirsAndFiles.Length;
-                _server!.SendResponse(response);
-
-                _dataTransfer!.SendBytes(dirsAndFiles);
+                return false;
             }
+
+            return true;
         }
 
         private string GetFilesAndFolders(string path)

@@ -10,35 +10,39 @@ namespace Server.Commands
     {
         private string _basePath;
 
-        public RemoveCommand(CloudStorageServer server, SocketFacade dataTransfer, string basePath) : base(server, dataTransfer)
+        public RemoveCommand(CloudStorageServer server, string basePath) : base(server)
         {
             _basePath = basePath;
         }
 
-        public override void Execute(Request request)
+        protected override void DoAction(Request request)
         {
-            Response response;
-
-            if (request.Args.Length == 0)
-            {
-                response = new Response();
-                response.Status = CommandStatus.NotOk;
-                _server!.SendResponse(response);
-
-                return;
-            }
-
             foreach (var item in request.Args)
             {
-                if (File.Exists(item))
-                    File.Delete(item);
-                else if (Directory.Exists(item))
-                    Directory.Delete(item);
+                string path = _basePath + item;
+                if (File.Exists(path))
+                    File.Delete(path);
+                else if (Directory.Exists(path))
+                    Directory.Delete(path);
             }
 
-            response = new Response();
-            response.Status = CommandStatus.Ok;
-            _server!.SendResponse(response);
+            Response response = new Response(CommandStatus.Ok);
+            _server!.SendResponse(response, "Сompleted successfully");
+        }
+
+        protected override bool CanExecute(object parameter, out string? errorMessage)
+        {
+            errorMessage = null;
+
+            string[]? paths = parameter as string[];
+            if (paths == null || paths.Length == 0)
+            {
+                errorMessage = "Not correct request";
+
+                return false;
+            }
+
+            return true;
         }
     }
 }

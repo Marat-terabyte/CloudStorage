@@ -23,11 +23,11 @@ namespace Server
             switch (request.Command)
             {
                 case Command.List:
-                    return new ListCommand(Server, DataTransfer, BasePath);
+                    return new ListCommand(Server, BasePath);
                 case Command.Download:
-                    return new DownloadCommand(Server, DataTransfer, BasePath);
+                    return new DownloadCommand(Server, BasePath);
                 case Command.Remove:
-                    return new RemoveCommand(Server, DataTransfer, BasePath);
+                    return new RemoveCommand(Server, BasePath);
                 default:
                     return null;
             }
