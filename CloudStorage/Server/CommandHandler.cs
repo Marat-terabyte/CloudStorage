@@ -1,7 +1,9 @@
-﻿using Server.Commands;
+﻿// MIT License
+// Copyright (c) 2024 Marat
+
+using Server.Commands;
 using CloudStorageLibrary;
 using CloudStorageLibrary.Commands;
-using System.Net;
 
 namespace Server
 {

@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿// MIT License
+// Copyright (c) 2024 Marat
+
 using CloudStorageLibrary;
 using CloudStorageLibrary.Commands;
 
