@@ -30,17 +30,18 @@ namespace Server.Commands
             _server!.SendResponse(response, dirsAndFiles);
         }
 
-        protected override bool CanExecute(object parameter, out string? errorMessage)
+        protected override bool CanExecute(Request request, out string? errorMessage)
         {
             errorMessage = null;
 
-            string[]? args = parameter as string[];
-            if (args == null)
+            if (request == null)
             {
                 errorMessage = "Not correct request";
-                
+
                 return false;
             }
+
+            string[]? args = request.Args;
 
             string path;
             if (args.Length == 0)

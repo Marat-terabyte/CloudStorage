@@ -30,12 +30,11 @@ namespace Server.Commands
             _server!.SendResponse(response, "Сompleted successfully");
         }
 
-        protected override bool CanExecute(object parameter, out string? errorMessage)
+        protected override bool CanExecute(Request request, out string? errorMessage)
         {
             errorMessage = null;
 
-            string[]? paths = parameter as string[];
-            if (paths == null || paths.Length == 0)
+            if (request == null || request.Args.Length == 0)
             {
                 errorMessage = "Not correct request";
 

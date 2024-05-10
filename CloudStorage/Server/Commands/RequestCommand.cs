@@ -17,7 +17,7 @@ namespace Server.Commands
 
         public void Execute(Request request)
         {
-            if (CanExecute(request.Args, out string? errorMessage))
+            if (CanExecute(request, out string? errorMessage))
                 DoAction(request);
             else
             {
@@ -30,7 +30,7 @@ namespace Server.Commands
         }
         
         protected abstract void DoAction(Request request);
-        protected abstract bool CanExecute(object parameter, out string? errorMessage);
+        protected abstract bool CanExecute(Request request, out string? errorMessage);
 
     }
 }

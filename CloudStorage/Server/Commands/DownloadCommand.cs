@@ -27,17 +27,18 @@ namespace Server.Commands
 
         }
 
-        protected override bool CanExecute(object parameter, out string? errorMessage)
+        protected override bool CanExecute(Request request, out string? errorMessage)
         {
             errorMessage = null;
 
-            string[]? paths = parameter as string[];
-            if (paths == null)
+            if (request == null)
             {
                 errorMessage = "Not correct request";
 
                 return false;
             }
+
+            string[]? paths = request.Args;
 
             string[] notExistFiles = CheckFiles(paths);
             if (notExistFiles.Length != 0)
