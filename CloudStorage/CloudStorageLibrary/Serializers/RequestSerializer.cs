@@ -96,6 +96,8 @@ namespace CloudStorageLibrary.Serializers
                     return Command.Remove;
                 case "SignIn":
                     return Command.SignIn;
+                case "SignUp":
+                    return Command.SignUp;
                 case "SignOut":
                     return Command.SignOut;
                 case "List":

@@ -5,6 +5,6 @@ namespace CloudStorageLibrary.Commands
 {
     public enum Command
     {
-        Upload, Download, List, Remove, SignIn, SignOut
+        Upload, Download, List, Remove, SignIn, SignUp, SignOut
     }
 }
