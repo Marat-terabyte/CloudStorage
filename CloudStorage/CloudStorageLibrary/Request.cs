@@ -11,11 +11,20 @@ namespace CloudStorageLibrary
     /// </summary>
     public class Request
     {
-        public string Username { get; set; }
+        public long? SessionId { get; set; }
+        public string? Username { get; set; }
         public Command Command { get; set; }
         public string[] Args { get; set; }
 
         public Request() { }
+
+        public Request(long sessionId, string username, Command command, string[] args)
+        {
+            SessionId = sessionId;
+            Username = username;
+            Command = command;
+            Args = args;
+        }
 
         public Request(string username, Command command, string[] args)
         {
@@ -38,6 +47,7 @@ namespace CloudStorageLibrary
         public bool Equals(Request? other)
         {
             return other != null &&
+                other.SessionId == SessionId &&
                 other.Username == Username &&
                 other.Command == Command &&
                 Args.SequenceEqual(other.Args);
@@ -45,7 +55,7 @@ namespace CloudStorageLibrary
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Username, Command, Args);
+            return HashCode.Combine(SessionId, Username, Command, Args);
         }
     }
 }

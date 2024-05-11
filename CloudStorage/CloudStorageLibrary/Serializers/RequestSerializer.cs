@@ -17,7 +17,8 @@ namespace CloudStorageLibrary.Serializers
         public static string Serialize(Request request)
         {
             StringBuilder stringBuilder = new StringBuilder();
-
+            
+            stringBuilder.Append($"Session id: {request.SessionId}\n");
             stringBuilder.Append(request.Username + '\n');
             stringBuilder.Append(request.Command.ToString() + '\n');
             SerializeRequestArgs(request, stringBuilder);
@@ -65,7 +66,8 @@ namespace CloudStorageLibrary.Serializers
 
             try
             {
-                DeserializedRequest.Username = ReadUsername(out int index, request);
+                DeserializedRequest.SessionId = ReadSessionId(out int index, request);
+                DeserializedRequest.Username = ReadUsername(ref index, request);
                 DeserializedRequest.Command = ReadCommand(ref index, request);
                 DeserializedRequest.Args = ReadArgs(ref index, request);
             }
@@ -77,10 +79,25 @@ namespace CloudStorageLibrary.Serializers
             return DeserializedRequest;
         }
 
-        private static string ReadUsername(out int index, string request)
+        private static long? ReadSessionId(out int index, string request)
         {
-            index = 0;
-            return StringSeparator.Separate(ref index, request, '\n');
+            index = (request.IndexOf(':')) + 1;
+            string stringId = StringSeparator.Separate(ref index, request, '\n');
+
+            bool parsed = long.TryParse(stringId, out var sessionId);
+            if (parsed)
+                return sessionId;
+
+            return null;
+        }
+
+        private static string? ReadUsername(ref int index, string request)
+        {
+            string username = StringSeparator.Separate(ref index, request, '\n');
+            if (string.IsNullOrWhiteSpace(username))
+                return null;
+
+            return username;
         }
         private static Command ReadCommand(ref int index, string request) => GetCommand(StringSeparator.Separate(ref index, request, '\n'));
 
