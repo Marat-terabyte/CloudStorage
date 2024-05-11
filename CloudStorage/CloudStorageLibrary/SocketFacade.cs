@@ -14,10 +14,21 @@ namespace CloudStorageLibrary
         private bool _disposedSocket;
 
         public Socket Socket { get; set; }
+        
         public bool IsConnected
         {
-            get =>
-                !(Socket.Available == 0 && Socket.Poll(1000, SelectMode.SelectRead));
+            get
+            {
+                if (!_disposedSocket)
+                    return false;
+
+                return !(Socket.Available == 0 && Socket.Poll(1000, SelectMode.SelectRead));
+            }
+        }
+
+        public int Available
+        {
+            get => Socket.Available;
         }
 
         public SocketFacade(Socket socket)
