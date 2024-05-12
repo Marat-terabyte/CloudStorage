@@ -10,13 +10,15 @@ namespace Server.Commands
 {
     internal class SignInCommand : RequestCommand
     {
+        private long _sessionId;
         private IUserRepository _database;
 
         public bool IsAuthorized { get; private set; }
 
-        public SignInCommand(CloudStorageServer server, IUserRepository repository) : base(server)
+        public SignInCommand(CloudStorageServer server, long sessionId, IUserRepository repository) : base(server)
         {
             IsAuthorized = false;
+            _sessionId = sessionId;
             _database = repository;
         }
 
@@ -59,7 +61,7 @@ namespace Server.Commands
                 IsAuthorized = true;
 
                 Response response = new Response(CommandStatus.Ok);
-                _server.SendResponse(response, "You logged in");
+                _server.SendResponse(response, _sessionId.ToString()); // Send session id to the client
             }
             else
             {

@@ -5,18 +5,19 @@ using Server.Commands;
 using CloudStorageLibrary;
 using CloudStorageLibrary.Commands;
 using Server.Database;
-using Server.Database.Models;
 
 namespace Server
 {
     internal class CommandHandler
     {
+        public long SessionID {  get; set; }
         public CloudStorageServer Server { get; set; }
         public string BasePath { get; set; }
         public IUserRepository Repository { get; set; }
 
-        public CommandHandler(CloudStorageServer server, IUserRepository repository, string basePath)
+        public CommandHandler(CloudStorageServer server, long sessionId, IUserRepository repository, string basePath)
         {
+            SessionID = sessionId;
             Server = server;
             Repository = repository;
             BasePath = basePath;
@@ -35,7 +36,7 @@ namespace Server
                 case Command.Upload:
                     return new UploadCommand(Server, BasePath);
                 case Command.SignIn:
-                    return new SignInCommand(Server, Repository);
+                    return new SignInCommand(Server, SessionID, Repository);
                 case Command.SignUp:
                     return new SignUpCommand(Server, Repository);
                 default:
