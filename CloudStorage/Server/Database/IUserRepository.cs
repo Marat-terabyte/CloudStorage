@@ -9,6 +9,7 @@ namespace Server.Database
     {
         IEnumerable<User> GetAll();
         User? GetById(int id);
+        User? GetByUsername(string username);
         void Insert(User user);
         void Delete(int id);
         void Update(User user);

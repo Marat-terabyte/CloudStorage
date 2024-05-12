@@ -50,12 +50,10 @@ namespace Server.Commands
 
         protected override void DoAction(Request request)
         {
-            var users = _database.GetAll();
-
             string username = request.Username!;
             string password = request.Args[0];
 
-            User? user = users.Where(u => u.Username == username).FirstOrDefault();
+            User? user = _database.GetByUsername(username);
             if (user != null && user.Password == password)
             {
                 IsAuthorized = true;

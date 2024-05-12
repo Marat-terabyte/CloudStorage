@@ -29,6 +29,11 @@ namespace Server.Database
             return _context.Users.Find(id);
         }
 
+        public User? GetByUsername(string username)
+        {
+            return _context.Users.Where(u => u.Username == username).FirstOrDefault();
+        }
+
         public void Insert(User user)
         {
             _context.Users.Add(user);

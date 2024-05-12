@@ -36,7 +36,7 @@ namespace Server.Commands
                 return false;
             }
 
-            User? user = _database.GetAll().Where(u => u.Username == username).FirstOrDefault();
+            User? user = _database.GetByUsername(username);
             if (user != null)
             {
                 errorMessage = "A user with the same username already exists";
@@ -57,9 +57,7 @@ namespace Server.Commands
 
         protected override void DoAction(Request request)
         {
-            User user = new User();
-            user.Username = request.Username!;
-            user.Password = request.Args[0];
+            User user = new User(request.Username!, password: request.Args[0]);
 
             _database.Insert(user);
             _database.Save();
