@@ -9,7 +9,7 @@ namespace Server.Database
     /// <summary>
     /// Represents Repository pattern
     /// </summary>
-    internal class UserRepository : IRepository<User>, IDisposable
+    internal class UserRepository : IUserRepository, IDisposable
     {
         private ApplicationContext _context;
         private bool _disposed = false;

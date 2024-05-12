@@ -13,9 +13,9 @@ namespace Server
     {
         public CloudStorageServer Server { get; set; }
         public string BasePath { get; set; }
-        public IRepository<User> Repository { get; set; }
+        public IUserRepository Repository { get; set; }
 
-        public CommandHandler(CloudStorageServer server, IRepository<User> repository, string basePath)
+        public CommandHandler(CloudStorageServer server, IUserRepository repository, string basePath)
         {
             Server = server;
             Repository = repository;

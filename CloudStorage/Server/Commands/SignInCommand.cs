@@ -10,11 +10,11 @@ namespace Server.Commands
 {
     internal class SignInCommand : RequestCommand
     {
-        private IRepository<User> _database;
+        private IUserRepository _database;
 
         public bool IsAuthorized { get; private set; }
 
-        public SignInCommand(CloudStorageServer server, IRepository<User> repository) : base(server)
+        public SignInCommand(CloudStorageServer server, IUserRepository repository) : base(server)
         {
             IsAuthorized = false;
             _database = repository;
@@ -52,7 +52,7 @@ namespace Server.Commands
         {
             var users = _database.GetAll();
 
-            string username = request.Username;
+            string username = request.Username!;
             string password = request.Args[0];
 
             User? user = users.Where(u => u.Username == username).FirstOrDefault();

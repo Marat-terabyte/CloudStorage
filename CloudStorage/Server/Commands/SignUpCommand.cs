@@ -10,9 +10,9 @@ namespace Server.Commands
 {
     internal class SignUpCommand : RequestCommand
     {
-        IRepository<User> _database;
+        private IUserRepository _database;
 
-        public SignUpCommand(CloudStorageServer server, IRepository<User> repository) : base(server)
+        public SignUpCommand(CloudStorageServer server, IUserRepository repository) : base(server)
         {
             _database = repository;
         }
@@ -28,8 +28,8 @@ namespace Server.Commands
                 return false;
             }
 
-            string username = request.Username;
-            if (username.Length < 4 || username.Contains(' '))
+            string? username = request.Username;
+            if (username == null || username.Length < 4 || username.Contains(' '))
             {
                 errorMessage = "Username must be more than 4 characters and must not contain spaces";
                 
@@ -58,7 +58,7 @@ namespace Server.Commands
         protected override void DoAction(Request request)
         {
             User user = new User();
-            user.Username = request.Username;
+            user.Username = request.Username!;
             user.Password = request.Args[0];
 
             _database.Insert(user);
