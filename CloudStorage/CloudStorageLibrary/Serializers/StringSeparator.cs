@@ -10,7 +10,7 @@ namespace CloudStorageLibrary.Serializers
             public static string Separate(ref int index, string str, char separator)
             {
                 StringBuilder sb = new StringBuilder();
-                while (str[index] != separator)
+                while (index < str.Length && str[index] != separator)
                 {
                     sb.Append(str[index++]);
                 }

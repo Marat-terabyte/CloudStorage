@@ -14,7 +14,7 @@ namespace CloudStorageLibrary
         public long? SessionId { get; set; }
         public string? Username { get; set; }
         public Command Command { get; set; }
-        public string[] Args { get; set; }
+        public string[] Args { get; set; } = [];
 
         public Request() { }
 
@@ -31,12 +31,6 @@ namespace CloudStorageLibrary
             Username = username;
             Command = command;
             Args = args;
-        }
-
-        public Request(string username, Command command)
-        {
-            Username = username;
-            Command = command;
         }
 
         public override bool Equals(object? obj)

@@ -18,9 +18,9 @@ namespace CloudStorageLibrary.Serializers
         {
             StringBuilder stringBuilder = new StringBuilder();
             
-            stringBuilder.Append($"Session id: {request.SessionId}\n");
-            stringBuilder.Append(request.Username + '\n');
-            stringBuilder.Append(request.Command.ToString() + '\n');
+            stringBuilder.Append($"SessionId: {request.SessionId}\r\n");
+            stringBuilder.Append($"Username: {request.Username}\r\n");
+            stringBuilder.Append($"Command: {request.Command.ToString()}\r\n");
             SerializeRequestArgs(request, stringBuilder);
 
             return stringBuilder.ToString();
@@ -28,6 +28,8 @@ namespace CloudStorageLibrary.Serializers
 
         private static string SerializeRequestArgs(Request request, StringBuilder stringBuilder)
         {
+            stringBuilder.Append("Args: ");
+
             if (request.Args == null)
                 return "";
 
@@ -60,50 +62,59 @@ namespace CloudStorageLibrary.Serializers
         /// <summary> Converts string request to <see cref="Request"/> </summary>
         /// <param name="request"> The value to deserialize </param>
         /// <exception cref="NotSupportedCommand"/>
-        public static Request? Deserialize(string request)
+        public static Request Deserialize(string request)
         {
-            Request DeserializedRequest = new Request();
+            Request deserializedRequest = new Request();
 
-            try
+            int i = 0;
+            while (i < request.Length)
             {
-                DeserializedRequest.SessionId = ReadSessionId(out int index, request);
-                DeserializedRequest.Username = ReadUsername(ref index, request);
-                DeserializedRequest.Command = ReadCommand(ref index, request);
-                DeserializedRequest.Args = ReadArgs(ref index, request);
-            }
-            catch
-            {
-                return null;
+                string requestField = "";
+                requestField = StringSeparator.Separate(ref i, request, ':');
+
+                var field = typeof(Request).GetProperty(requestField);
+                if (field != null)
+                {
+                    string parameter = StringSeparator.Separate(ref i, request, '\r');
+
+                    object? value = null;
+                    if (field.Name == "SessionId")
+                        value = ReadSessionId(parameter);
+                    else if (field.Name == "Username")
+                        value = ReadUsername(parameter);
+                    else if (field.Name == "Command")
+                        value = GetCommand(parameter);
+                    else if (field.Name == "Args")
+                        value = ReadArgs(parameter);
+
+                    field.SetValue(deserializedRequest, value);
+                    i++; // skip the char '\n'
+                }
             }
 
-            return DeserializedRequest;
+            return deserializedRequest;
         }
 
-        private static long? ReadSessionId(out int index, string request)
+        private static long? ReadSessionId(string id)
         {
-            index = (request.IndexOf(':')) + 1;
-            string stringId = StringSeparator.Separate(ref index, request, '\n');
-
-            bool parsed = long.TryParse(stringId, out var sessionId);
+            bool parsed = long.TryParse(id, out var sessionId);
             if (parsed)
                 return sessionId;
 
             return null;
         }
 
-        private static string? ReadUsername(ref int index, string request)
+        private static string? ReadUsername(string username)
         {
-            string username = StringSeparator.Separate(ref index, request, '\n');
             if (string.IsNullOrWhiteSpace(username))
                 return null;
 
-            return username;
+            return username.Trim();
         }
-        private static Command ReadCommand(ref int index, string request) => GetCommand(StringSeparator.Separate(ref index, request, '\n'));
 
         private static Command GetCommand(string command)
         {
-            switch (command)
+            switch (command.Trim())
             {
                 case "Upload":
                     return Command.Upload;
@@ -124,13 +135,16 @@ namespace CloudStorageLibrary.Serializers
             }
         }
 
-        private static string[] ReadArgs(ref int index, string request)
+        private static string[] ReadArgs(string str)
         {
             List<string> args = new List<string>();
 
-            while (index < request.Length)
+            int index = 0;
+            while (index < str.Length)
             {
-                args.Add(StringSeparator.Separate(ref index, request, ", "));
+                string arg = StringSeparator.Separate(ref index, str, ", ").Trim();
+                if (!string.IsNullOrEmpty(arg))
+                    args.Add(arg);
             }
 
             return args.ToArray();
