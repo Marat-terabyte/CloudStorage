@@ -3,6 +3,7 @@
 
 using Configuration;
 using System.Text.Json;
+using Server.Configuration.Exceptions;
 
 namespace Server.Configuration
 {
@@ -18,12 +19,18 @@ namespace Server.Configuration
         /// <summary>
         /// Reads json from the configuration file
         /// </summary>
-        public static Config? ReadConfig()
+        /// <exception cref="ConfigFileNotFound"></exception>
+        public static Config ReadConfig()
         {
             if (_instance == null)
-                _instance = JsonSerializer.Deserialize<Config>(File.ReadAllText(_configFile));
+            {
+                if (File.Exists(_configFile))
+                    _instance = JsonSerializer.Deserialize<Config>(File.ReadAllText(_configFile));
+                else
+                    throw new ConfigFileNotFound($"{_configFile} not found");
+            }
 
-            return _instance;
+            return _instance!;
         }
     }
 }
