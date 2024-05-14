@@ -11,7 +11,7 @@ namespace ClientLibrary
     /// <summary>
     /// Implements the logic of communication between server and client
     /// </summary>
-    internal class CloudStorageClient
+    public class CloudStorageClient
     {
         public SocketFacade MainSocket {  get; set; }
         public SocketFacade DataSocket { get; set; }
@@ -42,6 +42,19 @@ namespace ClientLibrary
                 string data = MainSocket.Receive(256);
                 response = ResponseSerializer.Deserialize(data);
             }
+
+            return response;
+        }
+
+        /// <summary> Receives response and data from the server</summary>
+        /// <param name="data">Data that receives from the server</param>
+        /// <exception cref="SocketException"/>
+        /// <exception cref="NotSupportedStatus"/>
+        /// <exception cref="NotValidByteLength"/>
+        public Response ReceiveResponse(out string? data)
+        {
+            Response response = ReceiveResponse();
+            data = DataSocket.Receive((int) response.DataLenght);
 
             return response;
         }
