@@ -27,7 +27,7 @@ namespace Server.Session
                 if (Username == null)
                     return null;
 
-                return Directory.GetCurrentDirectory() + '\\' + Username;
+                return Path.Combine(Directory.GetCurrentDirectory(), Username);
             }
         }
 

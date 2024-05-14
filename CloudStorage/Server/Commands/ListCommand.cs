@@ -22,7 +22,7 @@ namespace Server.Commands
             if (request.Args.Length == 0)
                 path = _basePath;
             else
-                path = _basePath + request.Args[0];
+                path = Path.Combine(_basePath, request.Args[0]);
 
             var dirsAndFiles = Encoding.UTF8.GetBytes(GetFilesAndFolders(path));
             
@@ -47,7 +47,7 @@ namespace Server.Commands
             if (args.Length == 0)
                 path = _basePath;
             else
-                path = _basePath + args[0];
+                path = Path.Combine(_basePath, args[0]);
 
             if (!Directory.Exists(path))
             {

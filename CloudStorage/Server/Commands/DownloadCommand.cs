@@ -19,7 +19,7 @@ namespace Server.Commands
 
         protected override void DoAction(Request request)
         {
-            string file = _basePath + request.Args[0];
+            string file = Path.Combine(_basePath, request.Args[0]);
 
             Response response = new Response(CommandStatus.Ok, new FileInfo(file).Length);
             _server!.SendResponse(response);
@@ -64,9 +64,10 @@ namespace Server.Commands
 
             foreach (string filename in filenames)
             {
-                if (!File.Exists(_basePath + filename))
+                string path = Path.Combine(_basePath, filename);
+                if (!File.Exists(path))
                 {
-                    notExistFiles.Add(_basePath + filename);
+                    notExistFiles.Add(path);
                 }
             }
 

@@ -49,7 +49,7 @@ namespace Server.Commands
             Response response = new Response(CommandStatus.Ok);
             _server.SendResponse(response);
             
-            _fileTransfer.ReceiveFile(_basePath + filename, size);
+            _fileTransfer.ReceiveFile(Path.Combine(_basePath, filename), size);
         }
     }
 }

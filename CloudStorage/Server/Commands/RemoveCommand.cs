@@ -19,7 +19,7 @@ namespace Server.Commands
         {
             foreach (var item in request.Args)
             {
-                string path = _basePath + item;
+                string path = Path.Combine(_basePath, item);
                 if (File.Exists(path))
                     File.Delete(path);
                 else if (Directory.Exists(path))
