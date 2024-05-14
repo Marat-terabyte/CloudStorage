@@ -13,18 +13,21 @@ namespace ClientLibrary
     /// </summary>
     internal class CloudStorageClient
     {
-        private SocketFacade _socket;
+        public SocketFacade MainSocket {  get; set; }
+        public SocketFacade DataSocket { get; set; }
 
         public int ReceiveBufferSize { get; set; } = 1024;
 
-        public CloudStorageClient(SocketFacade socket)
+        public CloudStorageClient(SocketFacade mainSocket, SocketFacade dataSocket)
         {
-            _socket = socket;
+            MainSocket = mainSocket;
+            DataSocket = dataSocket;
         }
 
-        public CloudStorageClient(Socket socket)
+        public CloudStorageClient(Socket mainSocket, Socket dataSocket)
         {
-            _socket = new SocketFacade(socket);
+            MainSocket = new SocketFacade(mainSocket);
+            DataSocket = new SocketFacade(dataSocket);
         }
 
         /// <summary> Receives a string response from the server and deserializes it </summary>
@@ -36,7 +39,7 @@ namespace ClientLibrary
             Response? response = null;
             while (response == null)
             {
-                string data = _socket.Receive(256);
+                string data = MainSocket.Receive(256);
                 response = ResponseSerializer.Deserialize(data);
             }
 
@@ -50,10 +53,10 @@ namespace ClientLibrary
         {
             string serializedRequest = RequestSerializer.Serialize(request);
 
-            _socket.Send(serializedRequest);
+            MainSocket.Send(serializedRequest);
         }
 
         /// <summary> Disconnects from the server </summary>
-        public void CloseConnection() => _socket.CloseConnection();
+        public void CloseConnection() => MainSocket.CloseConnection();
     }
 }
