@@ -18,5 +18,16 @@ namespace ClientLibrary
 
             return request;
         }
+
+        public static Request Build(Command command, string username, string[] args)
+        {
+            Request request = new Request();
+            request.SessionId = UserInfo.SessionId;
+            request.Username = username;
+            request.Command = command;
+            request.Args = args;
+
+            return request;
+        }
     }
 }
