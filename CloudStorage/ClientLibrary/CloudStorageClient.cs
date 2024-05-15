@@ -11,8 +11,10 @@ namespace ClientLibrary
     /// <summary>
     /// Implements the logic of communication between server and client
     /// </summary>
-    public class CloudStorageClient
+    public class CloudStorageClient : IDisposable
     {
+        private bool _disposed;
+
         public SocketFacade MainSocket {  get; set; }
         public SocketFacade DataSocket { get; set; }
 
@@ -70,6 +72,31 @@ namespace ClientLibrary
         }
 
         /// <summary> Disconnects from the server </summary>
-        public void CloseConnection() => MainSocket.CloseConnection();
+        public void CloseConnection()
+        {
+            MainSocket.CloseConnection();
+            DataSocket.CloseConnection();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    CloseConnection();
+                    MainSocket.Dispose();
+                    DataSocket.Dispose();
+                }
+
+                _disposed = true;
+            }
+        }
     }
 }
