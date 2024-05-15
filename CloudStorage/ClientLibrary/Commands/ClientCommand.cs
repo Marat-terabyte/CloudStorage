@@ -23,5 +23,15 @@ namespace ClientLibrary.Commands
 
             Client = new CloudStorageClient(mainSocket, dataTransfer);
         }
+
+        /// <summary>
+        /// Initializes <see cref="Client"/>.
+        /// <paramref name="mainSocket"/> and <paramref name="dataTransfer"/> must be connected to the server
+        /// </summary>
+        /// <exception cref="SocketException"></exception>
+        public ClientCommand(Socket mainSocket, Socket dataTransfer)
+        {
+            Client = new CloudStorageClient(mainSocket, dataTransfer);
+        }
     }
 }
