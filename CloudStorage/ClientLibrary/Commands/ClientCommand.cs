@@ -6,7 +6,7 @@ using System.Net.Sockets;
 
 namespace ClientLibrary.Commands
 {
-    internal abstract class ClientCommand
+    public abstract class ClientCommand
     {
         public CloudStorageClient Client { get; private set; }
 
