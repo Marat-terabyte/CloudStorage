@@ -24,7 +24,7 @@ namespace Client.ViewModel
 
         public MainWindowViewModel()
         {
-            
+            _currentContent = new SignInView(this);
         }
     }
 }
