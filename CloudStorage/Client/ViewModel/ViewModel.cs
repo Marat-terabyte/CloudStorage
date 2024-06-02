@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿// MIT License
+// Copyright (c) 2024 Marat
+
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Client.ViewModel

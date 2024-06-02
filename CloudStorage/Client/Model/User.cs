@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// MIT License
+// Copyright (c) 2024 Marat
 
 namespace Client.Model
 {
