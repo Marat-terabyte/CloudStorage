@@ -9,7 +9,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\doc-file.png" />
+    <None Remove="Assets\docx-file.png" />
+    <None Remove="Assets\exe-file.png" />
+    <None Remove="Assets\file.png" />
+    <None Remove="Assets\folder.png" />
+    <None Remove="Assets\html-file.png" />
+    <None Remove="Assets\pdf-file.png" />
+    <None Remove="Assets\png-file.png" />
+    <None Remove="Assets\txt-file.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\file.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ClientLibrary\ClientLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\doc-file.png" />
+    <Resource Include="Assets\docx-file.png" />
+    <Resource Include="Assets\exe-file.png" />
+    <Resource Include="Assets\folder.png" />
+    <Resource Include="Assets\html-file.png" />
+    <Resource Include="Assets\pdf-file.png" />
+    <Resource Include="Assets\png-file.png" />
+    <Resource Include="Assets\txt-file.png" />
   </ItemGroup>
 
 </Project>
