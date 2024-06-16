@@ -35,7 +35,7 @@ namespace Client.ViewModel
 
                     if (successful)
                     {
-                        
+                        new CloudStorageWindow().Show();
                     }
                     else
                     {
