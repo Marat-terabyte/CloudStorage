@@ -24,7 +24,7 @@ namespace Client.ViewModel
 
         public CloudStorageViewModel()
         {
-            
+            _currentContent = new CloudFileListView();
         }
     }
 }

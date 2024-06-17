@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Client.View.CloudFileListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Client.View"
+             xmlns:viewmodel="clr-namespace:Client.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <viewmodel:CloudFileListViewModel></viewmodel:CloudFileListViewModel>
+    </UserControl.DataContext>
+    <Grid>
+        <ListBox ItemsSource="{Binding CloudElements}" SelectedItem="{Binding SelectedCloudElement}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                 AllowDrop="True" Drop="ListBoxDrop">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Height="65" Background="Transparent" Orientation="Horizontal"
+                                Tag="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+                        <StackPanel.ContextMenu>
+                            <ContextMenu DataContext="{Binding Path=PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+                                <MenuItem Header="Download" Command="{Binding DownloadCommand}"></MenuItem>
+                                <MenuItem Header="Delete" Command="{Binding DeleteCommand}"></MenuItem>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        
+                        <StackPanel.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.OpenCommand,
+                                        RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"/>
+                        </StackPanel.InputBindings>
+                        <Image Source="{Binding ImageSource}"></Image>
+                        <TextBlock Margin="10 0 0 0" VerticalAlignment="Center" Text="{Binding Name}" FontSize="26"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>
