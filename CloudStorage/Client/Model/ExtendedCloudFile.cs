@@ -15,8 +15,7 @@ namespace Client.Model
 
         public override bool Download(out string? message)
         {
-            string toDir = new FileInfo(Path)?.Directory?.Name ?? "";
-            DownloadCommand command = new DownloadCommand(this, toDir);
+            DownloadCommand command = new DownloadCommand(this);
             
             return command.Execute(out message);
         }

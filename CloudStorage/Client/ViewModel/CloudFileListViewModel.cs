@@ -50,7 +50,7 @@ namespace Client.ViewModel
         {
             _currentPath = "";
             _cloudElements = ReceiveCloudElements();
-            SendFileCommand = new RelayCommand(async o => SendElement(o));
+            SendFileCommand = new RelayCommand(o => SendElement(o));
             DownloadCommand = new RelayCommand(o => DownloadElement());
             OpenCommand = new RelayCommand(o => OpenElement());
             DeleteCommand = new RelayCommand(o => DeleteElement());
@@ -88,8 +88,7 @@ namespace Client.ViewModel
 
         private async void SendElement(object o)
         {
-            string[]? paths = o as string[];
-            if (paths != null)
+            if (o is string[] paths)
             {
                 foreach (var path in paths)
                 {
@@ -114,7 +113,7 @@ namespace Client.ViewModel
             if (SelectedCloudElement != null)
             {
                 bool isSuccess = SelectedCloudElement.Download(out string? message);
-                MessageBox.Show($"{SelectedCloudElement.Name} was downloaded");
+                MessageBox.Show(message);
             }
         }
 

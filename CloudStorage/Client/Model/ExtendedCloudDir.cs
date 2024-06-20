@@ -28,12 +28,12 @@ namespace Client.Model
                 {
                     if (element is CloudFile cloudFile)
                     {
-                        var path = System.IO.Path.Combine(new DirectoryInfo(Path).Name, cloudFile.Path);
+                        var path = cloudFile.Path;
                         new ExtendedCloudFile(path).Download(out message);
                     }
                     else if (element is CloudFolder cloudDir)
                     {
-                        var path = System.IO.Path.Combine(new DirectoryInfo(Path).Name, cloudDir.Path);
+                        var path = cloudDir.Path;
                         if (element.Name != "..")
                             new ExtendedCloudDir(path).Download(out message);
                     }
