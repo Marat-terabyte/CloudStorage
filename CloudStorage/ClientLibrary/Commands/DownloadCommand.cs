@@ -20,13 +20,6 @@ namespace ClientLibrary.Commands
             CloudElement = elementToDownload;
         }
 
-        public DownloadCommand(CloudElement elementToDownload, string toDir)
-        {
-            _fileTransfer = new FileTransfer(Client.DataSocket);
-            CloudElement = elementToDownload;
-            ToDir = toDir;
-        }
-
         public bool Execute(out string? message)
         {
             Request request = RequestBuilder.Build(Command.Download, [CloudElement.Path]);
@@ -40,7 +33,7 @@ namespace ClientLibrary.Commands
                 return false;
             }
 
-            _fileTransfer.ReceiveFile(Path.Combine(ToDir, CloudElement.Name), response.DataLenght);
+            _fileTransfer.ReceiveFile(CloudElement.Path, response.DataLenght);
             message = $"{CloudElement.Name} downloaded successfully";
 
             return true;

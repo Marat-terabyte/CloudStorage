@@ -11,44 +11,44 @@ namespace ClientLibrary.Commands
     {
         private FileTransfer _fileTransfer;
 
-        public string Filename { get; set; }
-        public string FromCloudDir { get; set; } = "";
+        public string Path { get; set; }
+        public string ToCloudDir { get; set; } = "";
 
         public UploadCommand(string path)
         {
             _fileTransfer = new FileTransfer(Client.DataSocket);
-            Filename = path;
+            Path = path;
 
         }
         public UploadCommand(string path, string fromCloudDir)
         {
             _fileTransfer = new FileTransfer(Client.DataSocket);
-            Filename = path;
-            FromCloudDir = fromCloudDir;
+            Path = path;
+            ToCloudDir = fromCloudDir;
         }
 
         public bool Execute(out string? message)
         {
-            if (!File.Exists(Filename) && !Directory.Exists(Filename))
+            if (!File.Exists(Path) && !Directory.Exists(Path))
             {
-                message = $"{Filename} does not exist";
+                message = $"{Path} does not exist";
 
                 return false;
             }
 
-            FileAttributes attr = File.GetAttributes(Filename);
+            FileAttributes attr = File.GetAttributes(Path);
             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                string[] files = Directory.GetFiles(Filename);
-                string[] dirs = Directory.GetDirectories(Filename);
+                string[] files = Directory.GetFiles(Path);
+                string[] dirs = Directory.GetDirectories(Path);
                 
                 foreach (string file in files)
                 {
-                    new UploadCommand(file, Path.Combine(FromCloudDir, new DirectoryInfo(Filename).Name)).Execute(out message);
+                    new UploadCommand(file, System.IO.Path.Combine(ToCloudDir, new DirectoryInfo(Path).Name)).Execute(out message);
                 }
 
                 foreach (string dir in dirs)
-                    new UploadCommand(dir, Path.Combine(FromCloudDir, new DirectoryInfo(Filename).Name)).Execute(out message);
+                    new UploadCommand(dir, System.IO.Path.Combine(ToCloudDir, new DirectoryInfo(Path).Name)).Execute(out message);
             }
             else
             {
@@ -62,18 +62,18 @@ namespace ClientLibrary.Commands
                     return false;
                 }
 
-                _fileTransfer.SendFile(Filename);
+                _fileTransfer.SendFile(Path);
             }
 
-            message = $"{Filename} uploaded successfully";
+            message = $"{Path} uploaded successfully";
 
             return true;
         }
 
         private void SendRequest()
         {
-            var file = new FileInfo(Filename);
-            Request request = RequestBuilder.Build(Command.Upload, [Path.Combine(FromCloudDir, file.Name), file.Length.ToString()]);
+            var file = new FileInfo(Path);
+            Request request = RequestBuilder.Build(Command.Upload, [System.IO.Path.Combine(ToCloudDir, file.Name), file.Length.ToString()]);
             Client.SendRequest(request);
         }
     }
