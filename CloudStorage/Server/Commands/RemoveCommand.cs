@@ -23,7 +23,7 @@ namespace Server.Commands
                 if (File.Exists(path))
                     File.Delete(path);
                 else if (Directory.Exists(path))
-                    Directory.Delete(path);
+                    Directory.Delete(path, true);
             }
 
             Response response = new Response(CommandStatus.Ok);

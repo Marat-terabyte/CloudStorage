@@ -4,9 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
+        xmlns:viewmodel="clr-namespace:Client.ViewModel"
+        xmlns:view="clr-namespace:Client.View"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="CloudStorage" Height="450" Width="800">
+    <Window.DataContext>
+        <viewmodel:MainWindowViewModel></viewmodel:MainWindowViewModel>
+    </Window.DataContext>
     <Grid>
-
+        <ContentControl Content="{Binding CurrentContent}"></ContentControl>
     </Grid>
 </Window>

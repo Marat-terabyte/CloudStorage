@@ -29,29 +29,52 @@ namespace ClientLibrary.Commands
 
         public bool Execute(out string? message)
         {
-            if (!File.Exists(Filename))
+            if (!File.Exists(Filename) && !Directory.Exists(Filename))
             {
                 message = $"{Filename} does not exist";
 
                 return false;
             }
 
-            var file = new FileInfo(Filename);
-            Request request = RequestBuilder.Build(Command.Upload, [Path.Combine(FromCloudDir, file.Name), file.Length.ToString()]);
-            Client.SendRequest(request);
-
-            Response response = Client.ReceiveResponse();
-            if (response.Status == CommandStatus.NotOk)
+            FileAttributes attr = File.GetAttributes(Filename);
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                message = Client.DataSocket.Receive((int)response.DataLenght);
+                string[] files = Directory.GetFiles(Filename);
+                string[] dirs = Directory.GetDirectories(Filename);
+                
+                foreach (string file in files)
+                {
+                    new UploadCommand(file, Path.Combine(FromCloudDir, new DirectoryInfo(Filename).Name)).Execute(out message);
+                }
 
-                return false;
+                foreach (string dir in dirs)
+                    new UploadCommand(dir, Path.Combine(FromCloudDir, new DirectoryInfo(Filename).Name)).Execute(out message);
+            }
+            else
+            {
+                SendRequest();
+
+                Response response = Client.ReceiveResponse();
+                if (response.Status == CommandStatus.NotOk)
+                {
+                    message = Client.DataSocket.Receive((int)response.DataLenght);
+
+                    return false;
+                }
+
+                _fileTransfer.SendFile(Filename);
             }
 
-            _fileTransfer.SendFile(Filename);
             message = $"{Filename} uploaded successfully";
 
             return true;
+        }
+
+        private void SendRequest()
+        {
+            var file = new FileInfo(Filename);
+            Request request = RequestBuilder.Build(Command.Upload, [Path.Combine(FromCloudDir, file.Name), file.Length.ToString()]);
+            Client.SendRequest(request);
         }
     }
 }
