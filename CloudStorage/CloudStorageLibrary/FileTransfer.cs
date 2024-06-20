@@ -58,7 +58,7 @@ namespace CloudStorageLibrary
         /// <exception cref="SocketException"></exception>
         public void ReceiveFile(string fileName, long sizeOfFile)
         {
-            string? dir = Path.GetDirectoryName(fileName);
+            string? dir = fileName.Substring(0, fileName.LastIndexOf('\\') + 1);
             Console.WriteLine(dir);
             if (dir != null && !string.IsNullOrWhiteSpace(dir))
                 Directory.CreateDirectory(dir);

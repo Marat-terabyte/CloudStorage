@@ -13,7 +13,10 @@ namespace Server.Commands
 
         public ListCommand(CloudStorageServer server, string basePath) : base(server)
         {
-            _basePath = basePath;
+            if (basePath[basePath.Length - 1] == '\\')
+                _basePath = basePath;
+            else
+                _basePath = basePath + '\\';
         }
 
         protected override void DoAction(Request request)
@@ -67,12 +70,14 @@ namespace Server.Commands
 
             foreach (var dir in Directory.GetDirectories(path))
             {
-                stringBuilder.Append("dir: " + dir + '\n');
+                string relativePath = dir.Replace(_basePath, "");
+                stringBuilder.Append("dir: " + relativePath + '\n');
             }
 
             foreach (var file in Directory.GetFiles(path))
             {
-                stringBuilder.Append("file: " + file + '\n');
+                string relativePath = file.Replace(_basePath, "");
+                stringBuilder.Append("file: " + relativePath + '\n');
             }
 
             return stringBuilder.ToString();
