@@ -8,9 +8,9 @@ using System.Windows.Input;
 
 namespace Client.Model
 {
-    public class ExtendedCloudDir : ExtendedCloudElement
+    public class ExtendedCloudFolder : ExtendedCloudElement
     {
-        public ExtendedCloudDir(string path) : base(path)
+        public ExtendedCloudFolder(string path) : base(path)
         {
         }
 
@@ -35,7 +35,7 @@ namespace Client.Model
                     {
                         var path = cloudDir.Path;
                         if (element.Name != "..")
-                            new ExtendedCloudDir(path).Download(out message);
+                            new ExtendedCloudFolder(path).Download(out message);
                     }
                     
                 }

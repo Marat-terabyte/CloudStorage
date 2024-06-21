@@ -67,7 +67,7 @@ namespace Client.ViewModel
                     if (item is CloudFile)
                         cloudElements.Add(new ExtendedCloudFile(item.Path));
                     else
-                        cloudElements.Add(new ExtendedCloudDir(item.Path));
+                        cloudElements.Add(new ExtendedCloudFolder(item.Path));
                 }
 
                 return cloudElements;
@@ -78,7 +78,7 @@ namespace Client.ViewModel
 
         private void OpenElement()
         {
-            if (SelectedCloudElement is ExtendedCloudDir)
+            if (SelectedCloudElement is ExtendedCloudFolder)
             {
                 ChangeDir(SelectedCloudElement.Name);
                 CloudElements.Clear();
@@ -94,7 +94,7 @@ namespace Client.ViewModel
                 {
                     if (Directory.Exists(path))
                     {
-                        CloudElements.Add(new ExtendedCloudDir(path));
+                        CloudElements.Add(new ExtendedCloudFolder(path));
                     }
                     else if (File.Exists(path))
                     {
