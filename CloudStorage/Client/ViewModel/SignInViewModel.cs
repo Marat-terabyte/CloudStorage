@@ -26,22 +26,7 @@ namespace Client.ViewModel
         {
             get
             {
-                return new RelayCommand(async o =>
-                {
-                    bool successful = false;
-                    string? message = null;
-
-                    await Task.Run(() => successful = new SignInCommand(User.Username, User.Password).Execute(out message));
-
-                    if (successful)
-                    {
-                        new CloudStorageWindow().Show();
-                    }
-                    else
-                    {
-                        MessageBox.Show(message);
-                    }
-                });
+                return new RelayCommand(o => SignIn());
             }
         }
 
@@ -51,6 +36,18 @@ namespace Client.ViewModel
             {
                 return new RelayCommand(o => _mainWindow.CurrentContent = new SignUpView(_mainWindow));
             }
+        }
+
+        private async void SignIn()
+        {
+            string? message = null;
+            bool successful = false;
+
+            await Task.Run(() => successful = new SignInCommand(User?.Username ?? "", User?.Password ?? "").Execute(out message));
+            if (successful)
+                new CloudStorageWindow().Show();
+            else
+                MessageBox.Show(message);
         }
     }
 }

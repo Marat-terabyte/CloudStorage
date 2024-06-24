@@ -19,5 +19,29 @@ namespace Client.Model
             
             return command.Execute(out message);
         }
+
+        protected override string GetImageSource()
+        {
+            string extension = new FileInfo(Path).Extension;
+            switch (extension)
+            {
+                case ".png":
+                    return "Assets/png-file.png";
+                case ".pdf":
+                    return "Assets/pdf-file.png";
+                case ".exe":
+                    return "Assets/exe-file.png";
+                case ".doc":
+                    return "Assets/doc-file.png";
+                case ".docx":
+                    return "Assets/docx-file.png";
+                case ".txt":
+                    return "Assets/txt-file.png";
+                case ".html":
+                    return "Assets/html-file.png";
+                default:
+                    return "Assets/file.png";
+            }
+        }
     }
 }

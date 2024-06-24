@@ -16,7 +16,7 @@ namespace Server
         public static Dictionary<long, UserSession> Sessions = new Dictionary<long, UserSession>();
         public static ApplicationContext Database = new ApplicationContext();
 
-        async static Task Main(string[] args)
+        static void Main(string[] args)
         {
             Config config = ConfigReader.ReadConfig();
             if (config.Host == null)
