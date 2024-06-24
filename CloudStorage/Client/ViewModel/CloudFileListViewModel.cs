@@ -5,19 +5,17 @@ using Client.Core;
 using Client.Model;
 using ClientLibrary.CloudElements;
 using ClientLibrary.Commands;
-using CloudStorageLibrary.Commands;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Xml.Linq;
 
 namespace Client.ViewModel
 {
     public class CloudFileListViewModel : ViewModel
     {
         private ObservableCollection<ExtendedCloudElement> _cloudElements;
-        private string _currentPath;
+        private string _currentPath = "";
 
         public string CurrentPath
         {
@@ -48,7 +46,6 @@ namespace Client.ViewModel
 
         public CloudFileListViewModel()
         {
-            _currentPath = "";
             _cloudElements = ReceiveCloudElements();
             SendFileCommand = new RelayCommand(o => SendElement(o));
             DownloadCommand = new RelayCommand(o => DownloadElement());
@@ -113,7 +110,10 @@ namespace Client.ViewModel
             if (SelectedCloudElement != null)
             {
                 bool isSuccess = SelectedCloudElement.Download(out string? message);
-                MessageBox.Show(message);
+                if (isSuccess)
+                    MessageBox.Show("Successful downloaded");
+                else
+                    MessageBox.Show(message);
             }
         }
 
@@ -132,14 +132,16 @@ namespace Client.ViewModel
 
         private void ChangeDir(string path)
         {
-            CurrentPath = Path.Combine(CurrentPath, path);
-        }
-
-        private ExtendedCloudElement? GetElement(string filename)
-        {
-            ExtendedCloudElement? element = CloudElements.FirstOrDefault(x => x.Name == filename);
-
-            return element;
+            if (path == "..")
+            {
+                int index = CurrentPath.LastIndexOf("\\");
+                if (index > 0)
+                    CurrentPath = CurrentPath[..index];
+                else if (index == -1 && CurrentPath.Length > 0)
+                    CurrentPath = "";
+            }
+            else
+                CurrentPath = Path.Combine(CurrentPath, path);
         }
     }
 }
