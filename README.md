@@ -1,4 +1,4 @@
-# C# CloudStorage
+# CloudStorage
 The CloudStorage project is a program for storing files in a cloud service. This platform provides convenient access to files from anywhere in the world. This project was divided into two projects: Client, Server.
 
 The client is a Windows Presentation Foundation (WPF) project using the C# programming language.
