@@ -62,9 +62,9 @@ namespace Client.ViewModel
                 foreach (var item in elements)
                 {
                     if (item is CloudFile)
-                        cloudElements.Add(new ExtendedCloudFile(item.Path));
+                        cloudElements.Add(new ExtendedCloudFile(item.Path, item.Size!, item.CreationTime!));
                     else
-                        cloudElements.Add(new ExtendedCloudFolder(item.Path));
+                        cloudElements.Add(new ExtendedCloudFolder(item.Path, item.CreationTime!));
                 }
 
                 return cloudElements;

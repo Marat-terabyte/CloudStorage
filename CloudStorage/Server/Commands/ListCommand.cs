@@ -66,18 +66,22 @@ namespace Server.Commands
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.AppendLine("dir: ..");
+            stringBuilder.AppendLine($"dir: ..");
 
             foreach (var dir in Directory.GetDirectories(path))
             {
+                DirectoryInfo directoryInfo = new DirectoryInfo(dir);
+
                 string relativePath = dir.Replace(_basePath, "");
-                stringBuilder.Append("dir: " + relativePath + '\n');
+                stringBuilder.Append($"dir: {relativePath}, {directoryInfo.CreationTime}\n");
             }
 
             foreach (var file in Directory.GetFiles(path))
             {
+                FileInfo fileInfo = new FileInfo(file);
+
                 string relativePath = file.Replace(_basePath, "");
-                stringBuilder.Append("file: " + relativePath + '\n');
+                stringBuilder.Append($"file: {relativePath}, {fileInfo.Length}, {fileInfo.CreationTime}\n");
             }
 
             return stringBuilder.ToString();

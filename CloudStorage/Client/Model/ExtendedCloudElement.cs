@@ -22,6 +22,16 @@ namespace Client.Model
             ImageSource = "/Client;component/" + GetImageSource();
         }
 
+        public ExtendedCloudElement(string path, string creationTime) : base(path, creationTime)
+        {
+            ImageSource = "/Client;component/" + GetImageSource();
+        }
+
+        public ExtendedCloudElement(string path, string size, string creationTime) : base(path, creationTime, size)
+        {
+            ImageSource = "/Client;component/" + GetImageSource();
+        }
+
         public abstract bool Download(out string? message);
 
         protected abstract string GetImageSource();

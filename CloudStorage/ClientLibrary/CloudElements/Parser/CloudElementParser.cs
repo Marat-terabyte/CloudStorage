@@ -30,13 +30,23 @@ namespace ClientLibrary.CloudElements.Parser
             while (!string.IsNullOrEmpty(line))
             {
                 string type = ReadType(line, out int i);
-                string path = ReadPath(line, i += 1);
+                string[] properties = line.Substring(i + 1).Split(',', StringSplitOptions.TrimEntries); // substring from character ':'
+                string path = properties[0];
 
                 if (type == "dir")
-                    cloudElements.Add(new CloudFolder(path));
+                {
+                    if (properties.Length > 1)
+                        cloudElements.Add(new CloudElement(path, properties[1]));
+                    else
+                        cloudElements.Add(new CloudFolder(path));
+                }
                 else if (type == "file")
-                    cloudElements.Add(new CloudFile(path));
-
+                {
+                    if (properties.Length == 3)
+                        cloudElements.Add(new CloudFile(path, size: properties[1], creationTime: properties[2]));
+                    else
+                        cloudElements.Add(new CloudFile(path));
+                }
                 line = ReadLine();
             }
 
@@ -63,7 +73,7 @@ namespace ClientLibrary.CloudElements.Parser
         private string ReadPath(string line, int index)
         {
             StringBuilder path = new StringBuilder();
-            while (line.Length > index && line[index] != '\n')
+            while (line.Length > index && line[index] != ',')
             {
                 path.Append(line[index++]);
             }

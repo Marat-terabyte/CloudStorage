@@ -11,6 +11,10 @@ namespace ClientLibrary.CloudElements
         {
         }
 
+        public CloudFile(string path, string size, string creationTime) : base(path, creationTime, size)
+        {
+        }
+
         public override bool Equals(object? obj)
         {
             return Equals(obj as CloudFile);

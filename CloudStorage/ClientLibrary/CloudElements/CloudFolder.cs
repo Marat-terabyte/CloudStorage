@@ -14,6 +14,11 @@ namespace ClientLibrary.CloudElements
             CloudElements = new List<CloudElement>();
         }
 
+        public CloudFolder(string path, string creationTime) : base(path, creationTime)
+        {
+            CloudElements = new List<CloudElement>();
+        }
+
         public override bool Equals(object? obj)
         {
             return Equals(obj as CloudFolder);

@@ -14,6 +14,10 @@ namespace Client.Model
         {
         }
 
+        public ExtendedCloudFolder(string path, string creationTime) : base(path, creationTime)
+        {
+        }
+
         public override bool Download(out string? message)
         {
             ListCommand command = new ListCommand(Path);

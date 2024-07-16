@@ -13,6 +13,10 @@ namespace Client.Model
         {
         }
 
+        public ExtendedCloudFile(string path, string size, string creationTime) : base(path, size, creationTime)
+        { 
+        }
+
         public override bool Download(out string? message)
         {
             DownloadCommand command = new DownloadCommand(this);
