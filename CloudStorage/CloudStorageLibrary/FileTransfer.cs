@@ -13,7 +13,7 @@ namespace CloudStorageLibrary
         private SocketFacade _socketFacade;
         private bool _disposed;
 
-        public int BufferSize { get; set; } = 8192;
+        public int BufferSize { get; set; } = 65536;
 
         public FileTransfer(Socket socket)
         {
@@ -59,23 +59,18 @@ namespace CloudStorageLibrary
         public void ReceiveFile(string fileName, long sizeOfFile)
         {
             string? dir = fileName.Substring(0, fileName.LastIndexOf('\\') + 1);
-            Console.WriteLine(dir);
             if (dir != null && !string.IsNullOrWhiteSpace(dir))
                 Directory.CreateDirectory(dir);
 
             using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
-                long received;
-                for (received = 0; received < sizeOfFile - BufferSize ; received += BufferSize)
+                int len = 0;
+                do
                 {
-                    byte[] buffer = _socketFacade.ReceiveBytes(BufferSize);
-                    fs.Write(buffer, 0, buffer.Length);
+                    byte[] bytes = _socketFacade.ReceiveBytes(BufferSize, out len);
+                    fs.Write(bytes, 0, len);
                 }
-
-                // Receives the remaining file
-                int remainSize = (int)(sizeOfFile - received);
-                byte[] buff = _socketFacade.ReceiveBytes(remainSize);
-                fs.Write(buff, 0, buff.Length);
+                while (len != 0);
             }
         }
 
