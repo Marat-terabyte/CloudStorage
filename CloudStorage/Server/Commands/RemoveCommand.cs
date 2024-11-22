@@ -3,6 +3,7 @@
 
 using CloudStorageLibrary;
 using CloudStorageLibrary.Commands;
+using System.IO;
 
 namespace Server.Commands
 {
@@ -17,17 +18,36 @@ namespace Server.Commands
 
         protected override void DoAction(Request request)
         {
-            foreach (var item in request.Args)
+            Response response;
+            string? path = null;
+            try
             {
-                string path = Path.Combine(_basePath, item);
-                if (File.Exists(path))
-                    File.Delete(path);
-                else if (Directory.Exists(path))
-                    Directory.Delete(path, true);
+                DeleteFiles(request.Args, out path);
+
+                response = new Response(CommandStatus.Ok);
+                _server!.SendResponse(response, "Сompleted successfully");
+            }
+            catch (Exception)
+            {
+                response = new Response(CommandStatus.NotOk);
+                _server!.SendResponse(response, $"{path} could not be deleted. Try again later");
+            }
+        }
+
+        /// <param name="path">is the path of the file that could not be deleted</param>
+        private void DeleteFiles(string[] files, out string? path)
+        { 
+            foreach (var item in files)
+            {
+                path = item;
+                string fullPath = Path.Combine(_basePath, item);
+                if (File.Exists(fullPath))
+                    File.Delete(fullPath);
+                else if (Directory.Exists(fullPath))
+                    Directory.Delete(fullPath, true);
             }
 
-            Response response = new Response(CommandStatus.Ok);
-            _server!.SendResponse(response, "Сompleted successfully");
+            path = null;
         }
 
         protected override bool CanExecute(Request request, out string? errorMessage)
