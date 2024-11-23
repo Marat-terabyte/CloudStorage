@@ -15,7 +15,7 @@ namespace Server.Commands
 
         public bool IsAuthorized { get; private set; }
 
-        public SignInCommand(CloudStorageServer server, long sessionId, IUserRepository repository) : base(server)
+        public SignInCommand(CloudStorageClient client, long sessionId, IUserRepository repository) : base(client)
         {
             IsAuthorized = false;
             _sessionId = sessionId;
@@ -61,12 +61,12 @@ namespace Server.Commands
                 IsAuthorized = true;
 
                 Response response = new Response(CommandStatus.Ok);
-                _server.SendResponse(response, _sessionId.ToString()); // Send session id to the client
+                _client.SendResponse(response, _sessionId.ToString()); // Send session id to the client
             }
             else
             {
                 Response response = new Response(CommandStatus.NotOk);
-                _server.SendResponse(response, "Wrong login or password");
+                _client.SendResponse(response, "Wrong login or password");
             }
         }
     }

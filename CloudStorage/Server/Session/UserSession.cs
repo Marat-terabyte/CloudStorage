@@ -41,11 +41,11 @@ namespace Server.Session
             Created = createdTime;
         }
 
-        public void Execute(CloudStorageServer server, Request request)
+        public void Execute(CloudStorageClient client, Request request)
         {
             try
             {
-                ExecuteCommand(server, request);
+                ExecuteCommand(client, request);
             }
             catch (Exception ex)
             {
@@ -55,36 +55,36 @@ namespace Server.Session
                     string errorMessage = "An error occurred during runtime";
                     Response response = new Response(CommandStatus.NotOk);
 
-                    server.SendResponse(response, errorMessage);
+                    client.SendResponse(response, errorMessage);
                 }
             }
             finally
             {
-                server.Dispose();
+                client.Dispose();
             }
         }
 
-        private Request ReceiveRequest(CloudStorageServer server)
+        private Request ReceiveRequest(CloudStorageClient client)
         {
             Request? request = null;
             while (request == null)
             {
-                request = server.ReceiveRequest();
+                request = client.ReceiveRequest();
             }
 
             return request;
         }
 
-        private void ExecuteCommand(CloudStorageServer server, Request request)
+        private void ExecuteCommand(CloudStorageClient client, Request request)
         {
-            CommandHandler commandHandler = new CommandHandler(server, SessionID, Database, BasePath!);
+            CommandHandler commandHandler = new CommandHandler(client, SessionID, Database, BasePath!);
 
             RequestCommand? command = commandHandler.GetCommand(request);
             if (command == null)
             {
                 Response response = new Response(CommandStatus.NotOk);
                 string errorMessage = "The command does not exist";
-                server.SendResponse(response, errorMessage);
+                client.SendResponse(response, errorMessage);
 
                 return;
             }
@@ -94,7 +94,7 @@ namespace Server.Session
                 Response response = new Response(CommandStatus.NotOk);
                 string errorMessage = "You should be logged in";
 
-                server.SendResponse(response, errorMessage);
+                client.SendResponse(response, errorMessage);
             }
             else
             {

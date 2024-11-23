@@ -11,10 +11,10 @@ namespace Server.Commands
         private string _basePath;
         private FileTransfer _fileTransfer;
 
-        public UploadCommand(CloudStorageServer server, string basePath) : base(server)
+        public UploadCommand(CloudStorageClient client, string basePath) : base(client)
         {
             _basePath = basePath;
-            _fileTransfer = new FileTransfer(server.DataTransfer);
+            _fileTransfer = new FileTransfer(client.DataTransfer);
         }
 
         protected override bool CanExecute(Request request, out string? errorMessage)
@@ -47,7 +47,7 @@ namespace Server.Commands
             long size = long.Parse(request.Args[1]);
 
             Response response = new Response(CommandStatus.Ok);
-            _server.SendResponse(response);
+            _client.SendResponse(response);
             
             _fileTransfer.ReceiveFile(Path.Combine(_basePath, filename), size);
         }

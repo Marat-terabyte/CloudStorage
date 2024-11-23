@@ -33,9 +33,6 @@ namespace CloudStorageLibrary
 
         public SocketFacade(Socket socket)
         {
-            if (!socket.Connected)
-                throw new SocketException((int)SocketError.NotConnected, $"Socket is disconnected. Error code: {SocketError.NotConnected}");
-
             Socket = socket;
         }
 

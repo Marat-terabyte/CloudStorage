@@ -11,7 +11,7 @@ namespace Server.Commands
     {
         private string _basePath;
 
-        public ListCommand(CloudStorageServer server, string basePath) : base(server)
+        public ListCommand(CloudStorageClient client, string basePath) : base(client)
         {
             if (basePath[basePath.Length - 1] == '\\')
                 _basePath = basePath;
@@ -30,7 +30,7 @@ namespace Server.Commands
             var dirsAndFiles = Encoding.UTF8.GetBytes(GetFilesAndFolders(path));
             
             Response response = new Response(CommandStatus.Ok, dirsAndFiles.Length);
-            _server!.SendResponse(response, dirsAndFiles);
+            _client!.SendResponse(response, dirsAndFiles);
         }
 
         protected override bool CanExecute(Request request, out string? errorMessage)

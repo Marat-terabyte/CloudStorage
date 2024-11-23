@@ -12,7 +12,7 @@ namespace Server.Commands
     {
         private IUserRepository _database;
 
-        public SignUpCommand(CloudStorageServer server, IUserRepository repository) : base(server)
+        public SignUpCommand(CloudStorageClient client, IUserRepository repository) : base(client)
         {
             _database = repository;
         }
@@ -65,7 +65,7 @@ namespace Server.Commands
             Directory.CreateDirectory(user.Username);
 
             Response response = new Response(CommandStatus.Ok);
-            _server.SendResponse(response, "The account created");
+            _client.SendResponse(response, "The account created");
         }
     }
 }

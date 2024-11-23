@@ -8,11 +8,11 @@ namespace Server.Commands
 {
     internal abstract class RequestCommand
     {
-        protected CloudStorageServer _server;
+        protected CloudStorageClient _client;
 
-        public RequestCommand(CloudStorageServer server)
+        public RequestCommand(CloudStorageClient server)
         {
-            _server = server;
+            _client = server;
         }
 
         public void Execute(Request request)
@@ -23,9 +23,9 @@ namespace Server.Commands
             {
                 Response errorResponse = new Response(CommandStatus.NotOk);
                 if (errorMessage != null)
-                    _server.SendResponse(errorResponse, errorMessage);
+                    _client.SendResponse(errorResponse, errorMessage);
                 else
-                    _server.SendResponse(errorResponse);
+                    _client.SendResponse(errorResponse);
             }
         }
         

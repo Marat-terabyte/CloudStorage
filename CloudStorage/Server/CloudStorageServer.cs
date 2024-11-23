@@ -4,6 +4,7 @@
 using CloudStorageLibrary;
 using CloudStorageLibrary.Serializers;
 using CloudStorageLibrary.Serializers.Exceptions;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -17,72 +18,31 @@ namespace Server
         private bool _disposed;
         
         /// <summary><see cref="SocketFacade"/> for sending responses and receiving requests</summary>
-        public SocketFacade MainSocket { get; set; }
-        public SocketFacade DataTransfer { get; set; }
-        public int ReceiveBufferSize { get; set; } = 2048;
+        private SocketFacade _mainSocket { get; set; }
+        private SocketFacade _dataTransfer { get; set; }
 
-        public CloudStorageServer(Socket socket, Socket dataTransfer)
+        public CloudStorageServer(string host, int mainPort, int dataTransferPort)
         {
-            MainSocket = new SocketFacade(socket);
-            DataTransfer = new SocketFacade(dataTransfer);
+            Socket mainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            mainSocket.Bind(new IPEndPoint(IPAddress.Parse(host), mainPort));
+            mainSocket.Listen();
+
+            Socket dataTransferSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            dataTransferSocket.Bind(new IPEndPoint(IPAddress.Parse(host), dataTransferPort));
+            dataTransferSocket.Listen();
+
+            _mainSocket = new SocketFacade(mainSocket);
+            _dataTransfer = new SocketFacade(dataTransferSocket);
         }
 
-        /// <summary> Receives a string request from the user and deserializes it </summary>
-        /// <exception cref="SocketException"/>
-        /// <exception cref="NotSupportedCommand"/>
-        public Request ReceiveRequest()
+        public CloudStorageClient AcceptClient()
         {
-            Request? request = null;
-            while (request == null)
-            {
-                string data = MainSocket.Receive(1024);
-                request = RequestSerializer.Deserialize(data);
-            }
+            Socket client = _mainSocket.Socket.Accept();
+            Socket clientDataTrans = _dataTransfer.Socket.Accept();
 
-            return request;
+            return new CloudStorageClient(new SocketFacade(client), new SocketFacade(clientDataTrans));
         }
 
-        /// <summary> Serializes a response and sends it to the user </summary>
-        /// <param name="response"> Server response to serialize and send </param>
-        /// <exception cref="SocketException"/>
-        public void SendResponse(Response response)
-        {
-            string serializedResponse = ResponseSerializer.Serialize(response);
-
-            MainSocket.Send(serializedResponse);
-        }
-
-        /// <summary>
-        /// Serializes <paramref name="response"/>, encodes <paramref name="message"/> and sends them to the user
-        /// </summary>
-        public void SendResponse(Response response, string message)
-        {
-            byte[] buffer = Encoding.UTF8.GetBytes(message);
-            response.DataLenght = buffer.Length;
-
-            SendResponse(response);
-            DataTransfer.SendBytes(buffer);
-        }
-
-        /// <summary>
-        /// Serializes <paramref name="response"/>, sends it and <paramref name="message"/>
-        /// </summary>
-        public void SendResponse(Response response, byte[] message)
-        {
-            response.DataLenght = message.Length;
-
-            SendResponse(response);
-            DataTransfer.SendBytes(message);
-        }
-
-        /// <summary> Disconnects the user </summary>
-        public void CloseConnection()
-        {
-            MainSocket.CloseConnection();
-            DataTransfer.CloseConnection();
-        }
-
-        // Implementation of Dispose pattern
         public void Dispose()
         {
             Dispose(true);
@@ -95,9 +55,8 @@ namespace Server
             {
                 if (disposing)
                 {
-                    CloseConnection();
-                    MainSocket.Dispose();
-                    DataTransfer.Dispose();
+                    _mainSocket.Dispose();
+                    _dataTransfer.Dispose();
                 }
 
                 _disposed = true;

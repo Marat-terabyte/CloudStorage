@@ -11,7 +11,7 @@ namespace Server.Commands
     {
         private string _basePath;
 
-        public RemoveCommand(CloudStorageServer server, string basePath) : base(server)
+        public RemoveCommand(CloudStorageClient client, string basePath) : base(client)
         {
             _basePath = basePath;
         }
@@ -25,12 +25,12 @@ namespace Server.Commands
                 DeleteFiles(request.Args, out path);
 
                 response = new Response(CommandStatus.Ok);
-                _server!.SendResponse(response, "Сompleted successfully");
+                _client!.SendResponse(response, "Сompleted successfully");
             }
             catch (Exception)
             {
                 response = new Response(CommandStatus.NotOk);
-                _server!.SendResponse(response, $"{path} could not be deleted. Try again later");
+                _client!.SendResponse(response, $"{path} could not be deleted. Try again later");
             }
         }
 

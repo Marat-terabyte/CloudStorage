@@ -11,14 +11,14 @@ namespace Server
     internal class CommandHandler
     {
         public long SessionID {  get; set; }
-        public CloudStorageServer Server { get; set; }
+        public CloudStorageClient Client { get; set; }
         public string BasePath { get; set; }
         public IUserRepository Repository { get; set; }
 
-        public CommandHandler(CloudStorageServer server, long sessionId, IUserRepository repository, string basePath)
+        public CommandHandler(CloudStorageClient client, long sessionId, IUserRepository repository, string basePath)
         {
             SessionID = sessionId;
-            Server = server;
+            Client = client;
             Repository = repository;
             BasePath = basePath;
         }
@@ -28,17 +28,17 @@ namespace Server
             switch (request.Command)
             {
                 case Command.List:
-                    return new ListCommand(Server, BasePath);
+                    return new ListCommand(Client, BasePath);
                 case Command.Download:
-                    return new DownloadCommand(Server, BasePath);
+                    return new DownloadCommand(Client, BasePath);
                 case Command.Remove:
-                    return new RemoveCommand(Server, BasePath);
+                    return new RemoveCommand(Client, BasePath);
                 case Command.Upload:
-                    return new UploadCommand(Server, BasePath);
+                    return new UploadCommand(Client, BasePath);
                 case Command.SignIn:
-                    return new SignInCommand(Server, SessionID, Repository);
+                    return new SignInCommand(Client, SessionID, Repository);
                 case Command.SignUp:
-                    return new SignUpCommand(Server, Repository);
+                    return new SignUpCommand(Client, Repository);
                 default:
                     return null;
             }

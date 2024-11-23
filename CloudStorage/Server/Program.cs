@@ -19,34 +19,30 @@ namespace Server
         static void Main(string[] args)
         {
             Config config = ConfigReader.ReadConfig();
-            if (config.Host == null)
+            if (config.Host == null || config.MainPort == null || config.DataTransferPort == null)
             {
-                Console.WriteLine("'Host' in appsettings.json is empty");
+                Console.WriteLine("'Host' or 'MainPort' or 'DataTransferPort' in appsettings.json are empty");
                 
                 return;
             }
 
-            Socket mainSocket = SocketBuilder.Build(config.Host, 7070);
-            Socket dataTransferSocket = SocketBuilder.Build(config.Host, 7071);
+            CloudStorageServer server = new CloudStorageServer(config.Host, (int) config.MainPort, (int) config.DataTransferPort);
 
             while (true)
             {
-                Socket client = mainSocket.Accept();
-                Socket clientDataTransfer = dataTransferSocket.Accept();
+                CloudStorageClient client = server.AcceptClient();
                 
                 new Thread(() =>
                 {
                     try
                     {
-                        CloudStorageServer server = new CloudStorageServer(client, clientDataTransfer);
-
-                        Request request = server.ReceiveRequest();
+                        Request request = client.ReceiveRequest();
                         if (request.SessionId == null || request.SessionId == 0) // The user has not been assigned an ID
                         {
                             UserSession session = CreateSession();
                             Sessions.Add(session.SessionID, session);
 
-                            session.Execute(server, request);
+                            session.Execute(client, request);
                         }
                         else
                         {
@@ -54,17 +50,20 @@ namespace Server
                             {
                                 UserSession session = Sessions[(long)request.SessionId];
                                 if (session.Username == request.Username)
-                                    session.Execute(server, request);
+                                    session.Execute(client, request);
                                 else
-                                    server.SendResponse(new Response(CommandStatus.NotOk), "Your request data is invalid");
+                                    client.SendResponse(new Response(CommandStatus.NotOk), "Your request data is invalid");
                             }
                             catch (KeyNotFoundException)
                             {
-                                server.SendResponse(new Response(CommandStatus.NotOk), "Your session id is invalid");
+                                client.SendResponse(new Response(CommandStatus.NotOk), "Your session id is invalid");
                             }
                         }
                     }
-                    catch { }
+                    catch (Exception ex) 
+                    {
+                        Console.WriteLine(ex);
+                    }
                 }).Start();
             }
         }

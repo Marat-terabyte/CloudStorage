@@ -11,10 +11,10 @@ namespace Server.Commands
         private string _basePath;
         private FileTransfer _fileTransfer;
 
-        public DownloadCommand(CloudStorageServer server, string basePath) : base(server)
+        public DownloadCommand(CloudStorageClient client, string basePath) : base(client)
         {
             _basePath = basePath;
-            _fileTransfer = new FileTransfer(server.DataTransfer);
+            _fileTransfer = new FileTransfer(client.DataTransfer);
         }
 
         protected override void DoAction(Request request)
@@ -22,7 +22,7 @@ namespace Server.Commands
             string file = Path.Combine(_basePath, request.Args[0]);
 
             Response response = new Response(CommandStatus.Ok, new FileInfo(file).Length);
-            _server!.SendResponse(response);
+            _client!.SendResponse(response);
             _fileTransfer.SendFile(file);
 
         }
