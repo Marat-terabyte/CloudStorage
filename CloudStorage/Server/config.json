@@ -1,4 +1,6 @@
 {
   "Host": "127.0.0.1",
+  "MainPort": 7070,
+  "DataTransferPort" : 7071,
   "DatabaseConnectionString": "Data Source=CloudStorage.db"
 }

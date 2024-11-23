@@ -9,6 +9,8 @@ namespace Configuration
     internal class Config
     {
         public string? Host { get; set; }
+        public int? MainPort { get; set; }
+        public int? DataTransferPort { get; set; }
         public string? DatabaseConnectionString {  get; set; }
     }
 }
