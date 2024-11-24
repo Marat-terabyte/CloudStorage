@@ -100,21 +100,26 @@ namespace Client.ViewModel
 
                     string? message = null;
                     await Task.Run(() => new UploadCommand(path, CurrentPath).Execute(out message));
+                    
                     MessageBox.Show(message);
                 }
             }
         }
 
-        private void DownloadElement()
+        private async void DownloadElement()
         {
-            if (SelectedCloudElement != null)
+            bool isSuccess = false;
+            string? message = null;
+            await Task.Run(() =>
             {
-                bool isSuccess = SelectedCloudElement.Download(out string? message);
-                if (isSuccess)
-                    MessageBox.Show("Successful downloaded");
-                else
-                    MessageBox.Show(message);
-            }
+                if (SelectedCloudElement != null)
+                    isSuccess = SelectedCloudElement.Download(out message);
+            });
+
+            if (isSuccess)
+                MessageBox.Show("Successful downloaded");
+            else
+                MessageBox.Show(message);
         }
 
         private void DeleteElement()
@@ -126,6 +131,7 @@ namespace Client.ViewModel
 
                 CloudElements.Remove(SelectedCloudElement);
                 new RemoveCommand(elements).Execute(out string? message);
+                
                 MessageBox.Show(message);
             }
         }

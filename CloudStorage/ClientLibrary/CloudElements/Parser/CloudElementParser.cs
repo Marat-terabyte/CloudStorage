@@ -36,7 +36,7 @@ namespace ClientLibrary.CloudElements.Parser
                 if (type == "dir")
                 {
                     if (properties.Length > 1)
-                        cloudElements.Add(new CloudElement(path, properties[1]));
+                        cloudElements.Add(new CloudFolder(path, properties[1]));
                     else
                         cloudElements.Add(new CloudFolder(path));
                 }
